@@ -4,6 +4,8 @@ const browserify = require('browserify');
 const source = require('vinyl-source-stream');
 
 const gulp = require('gulp');
+const del = require('del');
+
 const streamify = require('gulp-streamify');
 const uglify = require('gulp-uglify');
 const rename = require('gulp-rename');
@@ -12,6 +14,10 @@ const merge = require('merge2');
 
 const ts = require('gulp-typescript');
 const tsProject = ts.createProject('tsconfig.json');
+
+gulp.task('clean', function (done) {
+    del(['./built', './built.test', './lib']).then(paths => done());
+});
 
 gulp.task('build', function () {
     const result = gulp.src('lib/**/*.ts')
@@ -37,3 +43,5 @@ gulp.task('bundle', function () {
         .pipe(rename('client.index.min.js'))
         .pipe(gulp.dest('./dist/'));
 });
+
+gulp.task('default', gulp.series('clean', 'build', 'bundle'));

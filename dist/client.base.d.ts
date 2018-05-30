@@ -5,6 +5,7 @@ export declare abstract class Client {
     readonly connectedId: string | null;
     protected readonly io: SocketIOClient.Socket | null;
     constructor(uri?: string, nsp?: string);
+    dispose(): void;
     attach(io: SocketIOClient.Socket): void;
     detach(): void;
     protected abstract _onConnection(): void;

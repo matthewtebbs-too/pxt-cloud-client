@@ -31,6 +31,12 @@ var Client = (function () {
         enumerable: true,
         configurable: true
     });
+    Client.prototype.dispose = function () {
+        if (this._io) {
+            this._io.close();
+            this._io = null;
+        }
+    };
     Client.prototype.attach = function (io) {
         var _this = this;
         this.detach();

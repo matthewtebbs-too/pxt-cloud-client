@@ -27,7 +27,16 @@ export abstract class Client {
 
     constructor(uri?: string, nsp?: string) {
         const transports_ = typeof document !== 'undefined' ? ['polling', 'websocket'] : ['websocket'];
+
         this.attach(SocketIO(`${uri || ClientConfig.defaultUri || ''}/${nsp || ''}`, { transports: transports_ }));
+    }
+
+    public dispose() {
+        if (this._io) {
+            this._io.close();
+
+            this._io = null;
+        }
     }
 
     public attach(io: SocketIOClient.Socket) {

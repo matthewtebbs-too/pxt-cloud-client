@@ -1,5 +1,5 @@
 {
-  "name": "pxt-cloud",
+  "name": "pxt-cloud-client",
   "version": "0.1.0",
   "description": "Client support for [Microsoft MakeCode (PXT)] cloud.",
   "module": "./dist/pxtcloud.js",

@@ -133,9 +133,10 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./client.base"));
+__export(require("./client.config"));
 __export(require("./client.world"));
 
-},{"./client.base":1,"./client.world":3}],5:[function(require,module,exports){
+},{"./client.base":1,"./client.config":2,"./client.world":3}],5:[function(require,module,exports){
 module.exports = after
 
 function after(count, callback, err_cb) {

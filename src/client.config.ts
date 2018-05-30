@@ -16,11 +16,11 @@ if (typeof location !== 'undefined' && location.search) {
     port = process.env.PXT_CLOUD_PORT;
 }
 
-export class Config {
+export class ClientConfig {
     public static hostname = hostname || 'localhost';
     public static port = port ? parseInt(port, 10) : 3000;
 
     public static get defaultUri(): string {
-        return `http://${Config.hostname}:${Config.port}`;
+        return `http://${ClientConfig.hostname}:${ClientConfig.port}`;
     }
 }

@@ -2,13 +2,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var SocketIO = require("socket.io-client");
-var config_1 = require("./config");
+var client_config_1 = require("./client.config");
 var debug = require('debug')('pxt-cloud:client');
 var Client = (function () {
     function Client(uri, nsp) {
         this._io = null;
         var transports_ = typeof document !== 'undefined' ? ['polling', 'websocket'] : ['websocket'];
-        this.attach(SocketIO((uri || config_1.Config.defaultUri || '') + "/" + (nsp || ''), { transports: transports_ }));
+        this.attach(SocketIO((uri || client_config_1.ClientConfig.defaultUri || '') + "/" + (nsp || ''), { transports: transports_ }));
     }
     Object.defineProperty(Client.prototype, "isConnected", {
         get: function () {
@@ -54,7 +54,38 @@ var Client = (function () {
 }());
 exports.Client = Client;
 
-},{"./config":3,"debug":16,"socket.io-client":42}],2:[function(require,module,exports){
+},{"./client.config":2,"debug":16,"socket.io-client":42}],2:[function(require,module,exports){
+(function (process){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var hostname, port;
+if (typeof location !== 'undefined' && location.search) {
+    var parsedQueryString = require('query-string').parse(location.search);
+    hostname = parsedQueryString.hostname;
+    port = parsedQueryString.port;
+}
+else if (typeof process !== 'undefined' && process.env) {
+    hostname = process.env.PXT_CLOUD_HOSTNAME;
+    port = process.env.PXT_CLOUD_PORT;
+}
+var ClientConfig = (function () {
+    function ClientConfig() {
+    }
+    Object.defineProperty(ClientConfig, "defaultUri", {
+        get: function () {
+            return "http://" + ClientConfig.hostname + ":" + ClientConfig.port;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    ClientConfig.hostname = hostname || 'localhost';
+    ClientConfig.port = port ? parseInt(port, 10) : 3000;
+    return ClientConfig;
+}());
+exports.ClientConfig = ClientConfig;
+
+}).call(this,require('_process'))
+},{"_process":40,"query-string":41}],3:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -95,38 +126,7 @@ var WorldClient = (function (_super) {
 }(client_base_1.Client));
 exports.WorldClient = WorldClient;
 
-},{"./client.base":1,"debug":16}],3:[function(require,module,exports){
-(function (process){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var hostname, port;
-if (typeof location !== 'undefined' && location.search) {
-    var parsedQueryString = require('query-string').parse(location.search);
-    hostname = parsedQueryString.hostname;
-    port = parsedQueryString.port;
-}
-else if (typeof process !== 'undefined' && process.env) {
-    hostname = process.env.PXT_CLOUD_HOSTNAME;
-    port = process.env.PXT_CLOUD_PORT;
-}
-var Config = (function () {
-    function Config() {
-    }
-    Object.defineProperty(Config, "defaultUri", {
-        get: function () {
-            return "http://" + Config.hostname + ":" + Config.port;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Config.hostname = hostname || 'localhost';
-    Config.port = port ? parseInt(port, 10) : 3000;
-    return Config;
-}());
-exports.Config = Config;
-
-}).call(this,require('_process'))
-},{"_process":40,"query-string":41}],4:[function(require,module,exports){
+},{"./client.base":1,"debug":16}],4:[function(require,module,exports){
 "use strict";
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
@@ -135,7 +135,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./client.base"));
 __export(require("./client.world"));
 
-},{"./client.base":1,"./client.world":2}],5:[function(require,module,exports){
+},{"./client.base":1,"./client.world":3}],5:[function(require,module,exports){
 module.exports = after
 
 function after(count, callback, err_cb) {

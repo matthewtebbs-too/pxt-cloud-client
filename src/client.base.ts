@@ -6,7 +6,7 @@
 
 import * as SocketIO from 'socket.io-client';
 
-import { Config } from './config';
+import { ClientConfig } from './client.config';
 
 const debug = require('debug')('pxt-cloud:client');
 
@@ -27,7 +27,7 @@ export abstract class Client {
 
     constructor(uri?: string, nsp?: string) {
         const transports_ = typeof document !== 'undefined' ? ['polling', 'websocket'] : ['websocket'];
-        this.attach(SocketIO(`${uri || Config.defaultUri || ''}/${nsp || ''}`, { transports: transports_ }));
+        this.attach(SocketIO(`${uri || ClientConfig.defaultUri || ''}/${nsp || ''}`, { transports: transports_ }));
     }
 
     public attach(io: SocketIOClient.Socket) {

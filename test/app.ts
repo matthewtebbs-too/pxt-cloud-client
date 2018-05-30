@@ -4,6 +4,6 @@
     Copyright (c) 2018 MuddyTummy Software LLC
 */
 
-import { Server, WorldEndpoint } from 'pxt-cloud';
+import * as PxtCloud from '../dist/pxtcloud';
 
-const endpointWorld = new WorldEndpoint(new Server());
+const clientWorld = new PxtCloud.WorldClient();

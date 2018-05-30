@@ -2,7 +2,11 @@
   "name": "pxt-cloud",
   "version": "0.1.0",
   "description": "Client support for [Microsoft MakeCode (PXT)] cloud.",
-  "main": "index.js",
+  "module": "./dist/pxtcloud.js",
+  "types": "./dist/pxtcloud.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/muddytummy/pxt-cloud-client.git"
@@ -19,20 +23,21 @@
     "@types/socket.io-client": "^1.4.32",
     "debug": "^3.1.0",
     "dotenv": "^5.0.1",
-    "pxt-cloud": "muddytummy/pxt-cloud"
+    "pxt-cloud": "muddytummy/pxt-cloud",
+    "query-string": "^5.1.1",
+    "socket.io-client": "^2.1.1"
   },
   "devDependencies": {
     "browserify": "^16.2.2",
     "del": "^3.0.0",
     "gulp": "^4.0.0",
     "gulp-rename": "^1.2.3",
-    "gulp-sourcemaps": "^2.6.4",
-    "gulp-streamify": "^1.0.2",
     "gulp-typescript": "^4.0.2",
     "gulp-uglify": "^3.0.0",
     "merge2": "^1.2.2",
     "tslint": "^5.10.0",
-    "typescript": "^2.8.3",
+    "typescript": "^2.8.4",
+    "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^2.0.0"
   },
   "engines": {

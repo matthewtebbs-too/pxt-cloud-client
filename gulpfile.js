@@ -1,47 +1,67 @@
+/*
+    MIT License
+
+    Copyright (c) 2018 MuddyTummy Software LLC
+*/
+
 'use strict';
 
-const browserify = require('browserify');
-const source = require('vinyl-source-stream');
+var SRC = './src/';
 
-const gulp = require('gulp');
-const del = require('del');
+var _BUILT = './built';
+var BUILT = _BUILT.concat('/');
+var BUILT_TEST = _BUILT.concat('.test/');
+var BUILT_TYPINGS = _BUILT.concat('/typings/');
 
-const streamify = require('gulp-streamify');
-const uglify = require('gulp-uglify');
-const rename = require('gulp-rename');
+var DST = './dist/';
 
-const merge = require('merge2');
+var gulp = require('gulp');
+var del = require('del');
+var merge = require('merge2');
 
-const ts = require('gulp-typescript');
-const tsProject = ts.createProject('tsconfig.json');
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
+
+var ts = require('gulp-typescript');
+var tsProject = ts.createProject('tsconfig.json');
 
 gulp.task('clean', function (done) {
-    del(['./built', './built.test', './lib']).then(paths => done());
+    del([BUILT, BUILT_TEST, DST]).then(paths => done());
 });
 
 gulp.task('build', function () {
-    const result = gulp.src('lib/**/*.ts')
+    var result = gulp.src(SRC.concat('**/*.ts'))
         .pipe(tsProject(ts.reporter.defaultReporter()));
 
     return merge([
-        result.dts.pipe(gulp.dest('built/definitions')),
-        result.js.pipe(gulp.dest('built/js'))
+        result.js.pipe(gulp.dest(BUILT)),
+        result.dts.pipe(gulp.dest(BUILT_TYPINGS))
     ]);
 });
 
+var browserify = require('browserify');
+var uglify = require('gulp-uglify');
+var rename = require('gulp-rename');
+
 gulp.task('bundle', function () {
-    const bundle = browserify(
-        'built/js/client.index.js',
+    var bundle = browserify(
+        BUILT.concat('pxtcloud.js'),
         {
-            standalone: 'Impetus',
+            standalone: 'PxtCloud',
         }).bundle();
 
-    return bundle
-        .pipe(source('client.index.js'))
-        .pipe(gulp.dest('./dist/'))
-        .pipe(streamify(uglify()))
-        .pipe(rename('client.index.min.js'))
-        .pipe(gulp.dest('./dist/'));
+    var result = bundle
+        .pipe(source('pxtcloud.js'))
+        .pipe(buffer())
+        .pipe(gulp.dest(DST))
+        .pipe(uglify())
+        .pipe(rename({ extname: '.min.js' }))
+        .pipe(gulp.dest(DST));
+
+    return merge([
+        result,
+        gulp.src(BUILT_TYPINGS.concat('**')).pipe(gulp.dest(DST))
+    ]);
 });
 
 gulp.task('default', gulp.series('clean', 'build', 'bundle'));

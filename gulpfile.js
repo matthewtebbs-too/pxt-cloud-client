@@ -35,18 +35,20 @@ gulp.task('build', function () {
 
     return merge([
         result.js.pipe(gulp.dest(BUILT)),
-        result.dts.pipe(gulp.dest(BUILT_TYPINGS))
+        result.dts.pipe(gulp.dest(BUILT_TYPINGS)),
+        gulp.src(SRC.concat('pxtcloud.d.ts')).pipe(gulp.dest(BUILT_TYPINGS)),
     ]);
 });
 
+var glob = require('glob');
 var browserify = require('browserify');
 var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
 
 gulp.task('bundle', function () {
     var bundle = browserify(
-        BUILT.concat('pxtcloud.js'),
         {
+            entries: glob.sync(BUILT.concat('**/*.js')),
             standalone: 'PxtCloud',
         }).bundle();
 
@@ -60,7 +62,7 @@ gulp.task('bundle', function () {
 
     return merge([
         result,
-        gulp.src(BUILT_TYPINGS.concat('**')).pipe(gulp.dest(DST))
+        gulp.src(BUILT_TYPINGS.concat('**')).pipe(gulp.dest(DST)),
     ]);
 });
 

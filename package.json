@@ -23,7 +23,6 @@
     "@types/socket.io-client": "^1.4.32",
     "debug": "^3.1.0",
     "dotenv": "^5.0.1",
-    "pxt-cloud": "muddytummy/pxt-cloud",
     "query-string": "^5.1.1",
     "socket.io-client": "^2.1.1"
   },

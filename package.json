@@ -4,6 +4,7 @@
   "description": "Client support for [Microsoft MakeCode (PXT)] cloud.",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
+  "browser": "./dist/pxtcloud.min.js",
   "files": [
     "dist/**/*",
     "lib/**/*"

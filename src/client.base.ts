@@ -45,13 +45,13 @@ export abstract class Client {
         this._io = io;
 
         io.on('connect', () => {
-            debug(`client connected`);
+            debug(`connected`);
 
             this._onConnection();
         });
 
         io.on('disconnect', () => {
-            debug(`client disconnected`);
+            debug(`disconnected`);
 
             this._onDisconnection();
         });

@@ -6,6 +6,6 @@
 
 require('dotenv').config();
 
-import * as PxtCloud from '../built/pxtcloud';
+import * as PxtCloud from '../lib';
 
 const clientWorld = new PxtCloud.WorldClient();

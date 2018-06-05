@@ -14,6 +14,7 @@ var BUILT_TEST = _BUILT.concat('.test/');
 var BUILT_TYPINGS = _BUILT.concat('/typings/');
 
 var DST = './dist/';
+var LIB = './lib/';
 
 var gulp = require('gulp');
 var del = require('del');
@@ -26,7 +27,7 @@ var ts = require('gulp-typescript');
 var tsProject = ts.createProject('tsconfig.json');
 
 gulp.task('clean', function (done) {
-    del([BUILT, BUILT_TEST, DST]).then(paths => done());
+    del([BUILT, BUILT_TEST, DST, LIB]).then(paths => done());
 });
 
 gulp.task('build', function () {
@@ -45,14 +46,23 @@ var browserify = require('browserify');
 var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
 
+var rollup = require('rollup-stream');
+
 gulp.task('bundle', function () {
+    var result = rollup('rollup.config.js')
+        .pipe(source('index.js'))
+        .pipe(gulp.dest(LIB));
+
     var bundle = browserify(
         {
             entries: glob.sync(BUILT.concat('**/*.js')),
             standalone: 'PxtCloud',
+            options: {
+                transform: ['debowerify', 'decomponentify', 'deamdify', 'deglobalify'],
+            },
         }).bundle();
 
-    var result = bundle
+    var resultb = bundle
         .pipe(source('pxtcloud.js'))
         .pipe(buffer())
         .pipe(gulp.dest(DST))
@@ -62,7 +72,8 @@ gulp.task('bundle', function () {
 
     return merge([
         result,
-        gulp.src(BUILT_TYPINGS.concat('**')).pipe(gulp.dest(DST)),
+        gulp.src(BUILT_TYPINGS.concat('**')).pipe(gulp.dest(LIB)),
+        resultb,
     ]);
 });
 

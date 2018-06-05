@@ -2,8 +2,8 @@
   "name": "pxt-cloud-client",
   "version": "0.1.0",
   "description": "Client support for [Microsoft MakeCode (PXT)] cloud.",
-  "module": "./dist/pxtcloud.js",
-  "types": "./dist/pxtcloud.d.ts",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "files": [
     "dist/**/*"
   ],
@@ -19,12 +19,13 @@
   },
   "homepage": "https://github.com/muddytummy/pxt-cloud-client#readme",
   "dependencies": {
-    "@types/node": "^8.10.17",
+    "@types/node": "^8.10.18",
     "@types/socket.io-client": "^1.4.32",
     "debug": "^3.1.0",
     "dotenv": "^5.0.1",
     "query-string": "^5.1.1",
-    "socket.io-client": "^2.1.1"
+    "socket.io-client": "^2.1.1",
+    "ws": "^5.2.0"
   },
   "devDependencies": {
     "browserify": "^16.2.2",
@@ -35,8 +36,12 @@
     "gulp-typescript": "^4.0.2",
     "gulp-uglify": "^3.0.0",
     "merge2": "^1.2.2",
+    "rollup": "^0.59.4",
+    "rollup-plugin-commonjs": "^8.4.1",
+    "rollup-plugin-node-resolve": "^3.3.0",
+    "rollup-stream": "^1.24.1",
     "tslint": "^5.10.0",
-    "typescript": "^2.8.4",
+    "typescript": "^2.9.1",
     "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^2.0.0"
   },
@@ -46,7 +51,8 @@
   },
   "scripts": {
     "clean": "gulp clean",
-    "start": "gulp bundle",
+    "bundle": "gulp bundle",
+    "start": "gulp",
     "test": "tsc -project test/ && node built.test/app.js"
   }
 }

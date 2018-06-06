@@ -8,7 +8,7 @@ var Client = (function () {
     function Client(uri, nsp) {
         this._io = null;
         var transports_ = typeof document !== 'undefined' ? ['polling', 'websocket'] : ['websocket'];
-        this.attach(SocketIO((uri || client_config_1.ClientConfig.defaultUri || '') + "/" + (nsp || ''), { transports: transports_ }));
+        this._attach(SocketIO((uri || client_config_1.ClientConfig.defaultUri || '') + "/" + (nsp || ''), { transports: transports_ }));
     }
     Object.defineProperty(Client.prototype, "isConnected", {
         get: function () {
@@ -37,9 +37,9 @@ var Client = (function () {
             this._io = null;
         }
     };
-    Client.prototype.attach = function (io) {
+    Client.prototype._attach = function (io) {
         var _this = this;
-        this.detach();
+        this._detach();
         this._io = io;
         io.on('connect', function () {
             debug("connected");
@@ -50,11 +50,15 @@ var Client = (function () {
             _this._onDisconnection();
         });
     };
-    Client.prototype.detach = function () {
+    Client.prototype._detach = function () {
         if (this.io) {
             this.io.off('disconnect');
         }
         this._io = null;
+    };
+    Client.prototype._onConnection = function () {
+    };
+    Client.prototype._onDisconnection = function () {
     };
     return Client;
 }());
@@ -111,22 +115,26 @@ var WorldClient = (function (_super) {
     function WorldClient(uri) {
         return _super.call(this, uri, 'pxt-cloud.world') || this;
     }
-    WorldClient.prototype.attach = function (io) {
+    WorldClient.prototype.addUser = function (user, id) {
+        this.io.emit('user_add', user, id || this.connectedId, function (confirmation) { return debug(confirmation); });
+        return true;
+    };
+    WorldClient.prototype.removeUser = function (id) {
+        this.io.emit('user_remove', id || this.connectedId);
+        return true;
+    };
+    WorldClient.prototype._attach = function (io) {
         var _this = this;
-        _super.prototype.attach.call(this, io);
+        _super.prototype._attach.call(this, io);
         io.on('login', function () {
             debug("client logged in as " + (_this.connectedId || 'unknown'));
         });
     };
-    WorldClient.prototype.detach = function () {
+    WorldClient.prototype._detach = function () {
         if (this.io) {
             this.io.off('login');
         }
-        _super.prototype.detach.call(this);
-    };
-    WorldClient.prototype._onConnection = function () {
-    };
-    WorldClient.prototype._onDisconnection = function () {
+        _super.prototype._detach.call(this);
     };
     return WorldClient;
 }(client_base_1.Client));

@@ -10,7 +10,7 @@ import { ClientConfig } from './client.config';
 
 const debug = require('debug')('pxt-cloud:client');
 
-export abstract class Client {
+export class Client {
     private _io: SocketIOClient.Socket | null = null;
 
     public get isConnected(): boolean {
@@ -28,7 +28,7 @@ export abstract class Client {
     constructor(uri?: string, nsp?: string) {
         const transports_ = typeof document !== 'undefined' ? ['polling', 'websocket'] : ['websocket'];
 
-        this.attach(SocketIO(`${uri || ClientConfig.defaultUri || ''}/${nsp || ''}`, { transports: transports_ }));
+        this._attach(SocketIO(`${uri || ClientConfig.defaultUri || ''}/${nsp || ''}`, { transports: transports_ }));
     }
 
     public dispose() {
@@ -39,8 +39,8 @@ export abstract class Client {
         }
     }
 
-    public attach(io: SocketIOClient.Socket) {
-        this.detach();
+    protected _attach(io: SocketIOClient.Socket) {
+        this._detach();
 
         this._io = io;
 
@@ -57,7 +57,7 @@ export abstract class Client {
         });
     }
 
-    public detach() {
+    protected _detach() {
         if (this.io) {
             this.io.off('disconnect');
         }
@@ -65,6 +65,11 @@ export abstract class Client {
         this._io = null;
     }
 
-    protected abstract _onConnection(): void;
-    protected abstract _onDisconnection(): void;
+    protected _onConnection() {
+        /* do nothing */
+    }
+
+    protected _onDisconnection() {
+        /* do nothing */
+    }
 }

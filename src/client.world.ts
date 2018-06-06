@@ -4,10 +4,11 @@
     Copyright (c) 2018 MuddyTummy Software LLC
 */
 
-import { UserData, UserId, WorldAPI } from 'pxt-cloud';
+import { Callback, UserData, UserId, WorldAPI } from 'pxt-cloud';
 
 import { Client } from './client.base';
 
+// tslint:disable
 const debug = require('debug')('pxt-cloud:client.world');
 
 export class WorldClient extends Client implements WorldAPI {
@@ -15,14 +16,12 @@ export class WorldClient extends Client implements WorldAPI {
         super(uri, 'pxt-cloud.world');
     }
 
-    public addUser(user: UserData, id?: UserId): boolean {
-        this.io!.emit('user_add', user, id || this.connectedId, (completed: boolean) => debug(completed));
-        return true;
+    public addUser(user: UserData, cb?: Callback<boolean>): boolean {
+        return !!this.io!.emit('user_add', user, cb);
     }
 
-    public removeUser(id?: UserId): boolean {
-        this.io!.emit('user_remove', id || this.connectedId);
-        return true;
+    public removeUser(cb?: Callback<boolean>): boolean {
+        return !!this.io!.emit('user_remove', cb);
     }
 
     protected _attach(io: SocketIOClient.Socket) {

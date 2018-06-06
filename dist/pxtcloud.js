@@ -116,7 +116,7 @@ var WorldClient = (function (_super) {
         return _super.call(this, uri, 'pxt-cloud.world') || this;
     }
     WorldClient.prototype.addUser = function (user, id) {
-        this.io.emit('user_add', user, id || this.connectedId, function (confirmation) { return debug(confirmation); });
+        this.io.emit('user_add', user, id || this.connectedId, function (completed) { return debug(completed); });
         return true;
     };
     WorldClient.prototype.removeUser = function (id) {

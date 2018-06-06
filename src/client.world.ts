@@ -16,7 +16,7 @@ export class WorldClient extends Client implements WorldAPI {
     }
 
     public addUser(user: UserData, id?: UserId): boolean {
-        this.io!.emit('user_add', user, id || this.connectedId);
+        this.io!.emit('user_add', user, id || this.connectedId, (completed: boolean) => debug(completed));
         return true;
     }
 

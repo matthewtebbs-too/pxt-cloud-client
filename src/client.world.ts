@@ -4,7 +4,7 @@
     Copyright (c) 2018 MuddyTummy Software LLC
 */
 
-import { Callback, UserData, UserId, WorldAPI } from 'pxt-cloud';
+import { AckCallback, UserData, WorldAPI } from 'pxt-cloud';
 
 import { Client } from './client.base';
 
@@ -16,11 +16,11 @@ export class WorldClient extends Client implements WorldAPI {
         super(uri, 'pxt-cloud.world');
     }
 
-    public addUser(user: UserData, cb?: Callback<boolean>): boolean {
+    public addUser(user: UserData, cb?: AckCallback<boolean>): boolean {
         return !!this.io!.emit('user_add', user, cb);
     }
 
-    public removeUser(cb?: Callback<boolean>): boolean {
+    public removeUser(cb?: AckCallback<boolean>): boolean {
         return !!this.io!.emit('user_remove', cb);
     }
 

@@ -26,7 +26,7 @@ export class Client {
         return this._io;
     }
 
-    public connect(uri?: string, nsp?: string): Promise<Client> {
+    public connect(uri?: string, nsp?: string): Promise<this> {
         const transports_ = typeof document !== 'undefined' ? ['polling', 'websocket'] : ['websocket'];
 
         return new Promise((resolve, reject) => {

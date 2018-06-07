@@ -18,26 +18,18 @@ export class WorldClient extends Client implements WorldAPI {
     }
 
     public addUser(user: UserData, cb?: AckCallback<boolean>): boolean {
-        return !!this.io!.emit('user_add', user, cb);
+        return !!this.socket!.emit('user_add', user, cb);
     }
 
     public removeUser(cb?: AckCallback<boolean>): boolean {
-        return !!this.io!.emit('user_remove', cb);
+        return !!this.socket!.emit('user_remove', cb);
     }
 
-    protected _onConnection(io: SocketIOClient.Socket) {
-        super._onConnection(io);
+    protected _onConnect(socket: SocketIOClient.Socket) {
+        super._onConnect(socket);
 
-        io.on('login', () => {
+        socket.on('login', () => {
             debug(`client logged in as ${this.connectedId || 'unknown'}`);
         });
-    }
-
-    protected _onDisconnection() {
-        if (this.io) {
-            this.io.off('login');
-        }
-
-        super._onDisconnection();
     }
 }

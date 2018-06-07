@@ -12,34 +12,37 @@ import { ClientConfig } from './client.config';
 const debug = require('debug')('pxt-cloud:client');
 
 export class Client {
-    private _io: SocketIOClient.Socket | null = null;
+    private _socket: SocketIOClient.Socket | null = null;
 
     public get isConnected(): boolean {
-        return !!this._io && this._io.connected;
+        return !!this._socket && this._socket.connected;
     }
 
     public get connectedId(): string | null {
-        return this.isConnected ? `${this._io!.id}` : null;
+        return this.isConnected ? `${this._socket!.id}` : null;
     }
 
-    protected get io(): SocketIOClient.Socket | null {
-        return this._io;
+    protected get socket(): SocketIOClient.Socket | null {
+        return this._socket;
     }
 
     public connect(uri?: string, nsp?: string): Promise<this> {
-        const transports_ = typeof document !== 'undefined' ? ['polling', 'websocket'] : ['websocket'];
+        this.dispose();
 
         return new Promise((resolve, reject) => {
-            const io = SocketIO(`${uri || ClientConfig.defaultUri || ''}/${nsp || ''}`, { transports: transports_ });
+            const transports_ = typeof document !== 'undefined' ? ['polling', 'websocket'] : ['websocket'];
+            const socket = SocketIO(`${uri || ClientConfig.defaultUri || ''}/${nsp || ''}`, { transports: transports_ });
 
-            io.on('connect', () => {
-                this._onConnection(io);
+            this._socket = socket;
 
+            socket.on('connect', () => {
                 debug(`connected`);
+
+                this._onConnect(socket);
                 resolve(this);
             });
 
-            io.on('error', (err: Error) => {
+            socket.on('error', (err: Error) => {
                 debug(err);
                 reject(err);
             });
@@ -47,29 +50,21 @@ export class Client {
     }
 
     public dispose() {
-        if (this._io) {
-            this._io.close();
-            this._io = null;
+        if (this._socket) {
+            this._socket.close();
+            this._socket = null;
         }
     }
 
-    protected _onConnection(io: SocketIOClient.Socket) {
-        this._onDisconnection();
-
-        this._io = io;
-
-        io.on('disconnect', () => {
+    protected _onConnect(socket: SocketIOClient.Socket) {
+        socket.on('disconnect', () => {
             debug(`disconnected`);
 
-            this._onDisconnection();
+            this._onDisconnect();
         });
     }
 
-    protected _onDisconnection() {
-        if (this.io) {
-            this.io.off('disconnect');
-        }
-
-        this._io = null;
+    protected _onDisconnect() {
+        /* do nothing */
     }
 }

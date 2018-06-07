@@ -6,6 +6,5 @@ export declare class WorldClient extends Client implements WorldAPI {
     connect(uri?: string, nsp?: string): Promise<this>;
     addUser(user: UserData, cb?: AckCallback<boolean>): boolean;
     removeUser(cb?: AckCallback<boolean>): boolean;
-    protected _onConnection(io: SocketIOClient.Socket): void;
-    protected _onDisconnection(): void;
+    protected _onConnect(socket: SocketIOClient.Socket): void;
 }

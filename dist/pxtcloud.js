@@ -7,65 +7,61 @@ var client_config_1 = require("./client.config");
 var debug = require('debug')('pxt-cloud:client');
 var Client = (function () {
     function Client() {
-        this._io = null;
+        this._socket = null;
     }
     Object.defineProperty(Client.prototype, "isConnected", {
         get: function () {
-            return !!this._io && this._io.connected;
+            return !!this._socket && this._socket.connected;
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Client.prototype, "connectedId", {
         get: function () {
-            return this.isConnected ? "" + this._io.id : null;
+            return this.isConnected ? "" + this._socket.id : null;
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Client.prototype, "io", {
+    Object.defineProperty(Client.prototype, "socket", {
         get: function () {
-            return this._io;
+            return this._socket;
         },
         enumerable: true,
         configurable: true
     });
     Client.prototype.connect = function (uri, nsp) {
         var _this = this;
-        var transports_ = typeof document !== 'undefined' ? ['polling', 'websocket'] : ['websocket'];
+        this.dispose();
         return new Promise(function (resolve, reject) {
-            var io = SocketIO((uri || client_config_1.ClientConfig.defaultUri || '') + "/" + (nsp || ''), { transports: transports_ });
-            io.on('connect', function () {
-                _this._onConnection(io);
+            var transports_ = typeof document !== 'undefined' ? ['polling', 'websocket'] : ['websocket'];
+            var socket = SocketIO((uri || client_config_1.ClientConfig.defaultUri || '') + "/" + (nsp || ''), { transports: transports_ });
+            _this._socket = socket;
+            socket.on('connect', function () {
                 debug("connected");
+                _this._onConnect(socket);
                 resolve(_this);
             });
-            io.on('error', function (err) {
+            socket.on('error', function (err) {
                 debug(err);
                 reject(err);
             });
         });
     };
     Client.prototype.dispose = function () {
-        if (this._io) {
-            this._io.close();
-            this._io = null;
+        if (this._socket) {
+            this._socket.close();
+            this._socket = null;
         }
     };
-    Client.prototype._onConnection = function (io) {
+    Client.prototype._onConnect = function (socket) {
         var _this = this;
-        this._onDisconnection();
-        this._io = io;
-        io.on('disconnect', function () {
+        socket.on('disconnect', function () {
             debug("disconnected");
-            _this._onDisconnection();
+            _this._onDisconnect();
         });
     };
-    Client.prototype._onDisconnection = function () {
-        if (this.io) {
-            this.io.off('disconnect');
-        }
-        this._io = null;
+    Client.prototype._onDisconnect = function () {
     };
     return Client;
 }());
@@ -126,23 +122,17 @@ var WorldClient = (function (_super) {
         return _super.prototype.connect.call(this, uri, nsp || 'pxt-cloud.world');
     };
     WorldClient.prototype.addUser = function (user, cb) {
-        return !!this.io.emit('user_add', user, cb);
+        return !!this.socket.emit('user_add', user, cb);
     };
     WorldClient.prototype.removeUser = function (cb) {
-        return !!this.io.emit('user_remove', cb);
+        return !!this.socket.emit('user_remove', cb);
     };
-    WorldClient.prototype._onConnection = function (io) {
+    WorldClient.prototype._onConnect = function (socket) {
         var _this = this;
-        _super.prototype._onConnection.call(this, io);
-        io.on('login', function () {
+        _super.prototype._onConnect.call(this, socket);
+        socket.on('login', function () {
             debug("client logged in as " + (_this.connectedId || 'unknown'));
         });
-    };
-    WorldClient.prototype._onDisconnection = function () {
-        if (this.io) {
-            this.io.off('login');
-        }
-        _super.prototype._onDisconnection.call(this);
     };
     return WorldClient;
 }(client_base_1.Client));

@@ -6,15 +6,15 @@
 
 require('dotenv').config();
 
-import { UserData, UserId, WorldAPI } from 'pxt-cloud';
+import { WorldAPI } from 'pxt-cloud';
 
 import * as PxtCloud from '..';
 
 const debug = require('debug')('pxt-cloud:test');
 
-const worldAPI = new PxtCloud.WorldClient();
+function test(api: WorldAPI) {
+    api.addUser({ name: 'Jilly Bean' }, debug);
+    api.addUser({ name: 'Jilly Bean' }, debug);
+}
 
-setTimeout(() => {
-    worldAPI.addUser({ name: 'Jilly Bean' }, debug);
-    worldAPI.addUser({ name: 'Jilly Bean' }, debug);
-}, 2000);
+new PxtCloud.WorldClient().connect().then((api: WorldAPI) => test(api)).catch(debug);

@@ -21,8 +21,10 @@
   },
   "homepage": "https://github.com/muddytummy/pxt-cloud-client#readme",
   "dependencies": {
+    "@types/bluebird": "^2.0.33",
     "@types/node": "^8.10.18",
     "@types/socket.io-client": "^1.4.32",
+    "bluebird": "^2.11.0",
     "debug": "^3.1.0",
     "dotenv": "^5.0.1",
     "query-string": "^5.1.1",

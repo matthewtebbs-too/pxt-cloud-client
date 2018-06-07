@@ -4,6 +4,7 @@
     Copyright (c) 2018 MuddyTummy Software LLC
 */
 
+import * as Promise from 'bluebird';
 import { AckCallback, UserData, WorldAPI } from 'pxt-cloud';
 
 import { Client } from './client.base';
@@ -12,8 +13,8 @@ import { Client } from './client.base';
 const debug = require('debug')('pxt-cloud:client.world');
 
 export class WorldClient extends Client implements WorldAPI {
-    constructor(uri?: string) {
-        super(uri, 'pxt-cloud.world');
+    public connect(uri?: string, nsp?: string): Promise<WorldClient> {
+        return super.connect(uri, nsp || 'pxt-cloud.world') as Promise<WorldClient>;
     }
 
     public addUser(user: UserData, cb?: AckCallback<boolean>): boolean {
@@ -24,19 +25,19 @@ export class WorldClient extends Client implements WorldAPI {
         return !!this.io!.emit('user_remove', cb);
     }
 
-    protected _attach(io: SocketIOClient.Socket) {
-        super._attach(io);
+    protected _onConnection(io: SocketIOClient.Socket) {
+        super._onConnection(io);
 
         io.on('login', () => {
             debug(`client logged in as ${this.connectedId || 'unknown'}`);
         });
     }
 
-    protected _detach() {
+    protected _onDisconnection() {
         if (this.io) {
             this.io.off('login');
         }
 
-        super._detach();
+        super._onDisconnection();
     }
 }

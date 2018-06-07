@@ -4,6 +4,7 @@
     Copyright (c) 2018 MuddyTummy Software LLC
 */
 
+import * as Promise from 'bluebird';
 import * as SocketIO from 'socket.io-client';
 
 import { ClientConfig } from './client.config';
@@ -25,30 +26,37 @@ export class Client {
         return this._io;
     }
 
-    constructor(uri?: string, nsp?: string) {
+    public connect(uri?: string, nsp?: string): Promise<Client> {
         const transports_ = typeof document !== 'undefined' ? ['polling', 'websocket'] : ['websocket'];
 
-        this._attach(SocketIO(`${uri || ClientConfig.defaultUri || ''}/${nsp || ''}`, { transports: transports_ }));
+        return new Promise((resolve, reject) => {
+            const io = SocketIO(`${uri || ClientConfig.defaultUri || ''}/${nsp || ''}`, { transports: transports_ });
+
+            io.on('connect', () => {
+                this._onConnection(io);
+
+                debug(`connected`);
+                resolve(this);
+            });
+
+            io.on('error', (err: Error) => {
+                debug(err);
+                reject(err);
+            });
+        });
     }
 
     public dispose() {
         if (this._io) {
             this._io.close();
-
             this._io = null;
         }
     }
 
-    protected _attach(io: SocketIOClient.Socket) {
-        this._detach();
+    protected _onConnection(io: SocketIOClient.Socket) {
+        this._onDisconnection();
 
         this._io = io;
-
-        io.on('connect', () => {
-            debug(`connected`);
-
-            this._onConnection();
-        });
 
         io.on('disconnect', () => {
             debug(`disconnected`);
@@ -57,19 +65,11 @@ export class Client {
         });
     }
 
-    protected _detach() {
+    protected _onDisconnection() {
         if (this.io) {
             this.io.off('disconnect');
         }
 
         this._io = null;
-    }
-
-    protected _onConnection() {
-        /* do nothing */
-    }
-
-    protected _onDisconnection() {
-        /* do nothing */
     }
 }

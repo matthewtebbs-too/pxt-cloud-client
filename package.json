@@ -22,7 +22,7 @@
   "homepage": "https://github.com/muddytummy/pxt-cloud-client#readme",
   "dependencies": {
     "@types/bluebird": "^2.0.33",
-    "@types/node": "^8.10.18",
+    "@types/node": "^8.10.19",
     "@types/socket.io-client": "^1.4.32",
     "bluebird": "^2.11.0",
     "debug": "^3.1.0",
@@ -40,7 +40,7 @@
     "gulp-typescript": "^4.0.2",
     "gulp-uglify": "^3.0.0",
     "merge2": "^1.2.2",
-    "rollup": "^0.60.0",
+    "rollup": "^0.60.1",
     "rollup-plugin-commonjs": "^8.4.1",
     "rollup-plugin-node-resolve": "^3.3.0",
     "rollup-stream": "^1.24.1",

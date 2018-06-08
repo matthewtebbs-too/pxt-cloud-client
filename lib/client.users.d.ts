@@ -4,7 +4,8 @@ import { AckCallback, UserData, UsersAPI } from 'pxt-cloud';
 import { Client } from './client.base';
 export declare class UsersClient extends Client implements UsersAPI {
     connect(uri?: string, nsp?: string): Promise<this>;
-    addUser(user: UserData, cb?: AckCallback<boolean>): boolean;
-    removeUser(cb?: AckCallback<boolean>): boolean;
+    selfInfo(cb?: AckCallback<UserData>): boolean;
+    addSelf(user: UserData, cb?: AckCallback<boolean>): boolean;
+    removeSelf(cb?: AckCallback<boolean>): boolean;
     protected _onConnect(socket: SocketIOClient.Socket): void;
 }

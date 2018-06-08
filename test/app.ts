@@ -18,15 +18,16 @@ function testChatAPI(api: ChatAPI) {
 }
 
 function testUsersAPI(api: UsersAPI) {
-    api.addUser({ name: 'Jilly Bean' }, debug);
-    api.addUser({ name: 'Polly Anna' }, debug);
-    api.removeUser(debug);
+    api.addSelf({ name: 'Jilly Bean' }, debug);
+    api.addSelf({ name: 'Polly Anna' }, debug);
+    api.selfInfo(debug);
+    api.removeSelf(debug);
 }
 
 function testWorldAPI(api: WorldAPI) {
     /* no tests */
 }
 
+new PxtCloud.UsersClient().connect().then((api: UsersAPI) => testUsersAPI(api)).catch(debug);
 new PxtCloud.ChatClient().connect().then((api: ChatAPI) => testChatAPI(api)).catch(debug);
-// new PxtCloud.UsersClient().connect().then((api: UsersAPI) => testUsersAPI(api)).catch(debug);
-// new PxtCloud.WorldClient().connect().then((api: WorldAPI) => testWorldAPI(api)).catch(debug);
+new PxtCloud.WorldClient().connect().then((api: WorldAPI) => testWorldAPI(api)).catch(debug);

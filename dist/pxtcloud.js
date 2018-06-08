@@ -105,13 +105,13 @@ var ChatClient = (function (_super) {
         return _super.prototype.connect.call(this, uri, nsp || 'pxt-cloud.chat');
     };
     ChatClient.prototype.newMessage = function (msg, cb) {
-        this.socket.emit('new message', msg, cb);
+        this.socket.emit('new message', typeof msg === 'object' ? msg : { text: msg }, cb);
         return true;
     };
     ChatClient.prototype._onConnect = function (socket) {
         _super.prototype._onConnect.call(this, socket);
         socket.on('new message', function (msg) {
-            debug("user " + 'unknown' + " sent message '" + msg + "'");
+            debug("user " + 'unknown' + " sent message '" + msg.text + "'");
         });
     };
     return ChatClient;
@@ -172,12 +172,16 @@ var UsersClient = (function (_super) {
     UsersClient.prototype.connect = function (uri, nsp) {
         return _super.prototype.connect.call(this, uri, nsp || 'pxt-cloud.users');
     };
-    UsersClient.prototype.addUser = function (user, cb) {
-        this.socket.emit('add user', user, cb);
+    UsersClient.prototype.selfInfo = function (cb) {
+        this.socket.emit('self info', cb);
         return true;
     };
-    UsersClient.prototype.removeUser = function (cb) {
-        this.socket.emit('remove user', cb);
+    UsersClient.prototype.addSelf = function (user, cb) {
+        this.socket.emit('add self', user, cb);
+        return true;
+    };
+    UsersClient.prototype.removeSelf = function (cb) {
+        this.socket.emit('remove self', cb);
         return true;
     };
     UsersClient.prototype._onConnect = function (socket) {

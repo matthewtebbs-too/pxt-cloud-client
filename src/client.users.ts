@@ -16,14 +16,20 @@ export class UsersClient extends Client implements UsersAPI {
         return super.connect(uri, nsp || 'pxt-cloud.users') as Promise<this>;
     }
 
-    public addUser(user: UserData, cb?: AckCallback<boolean>): boolean {
-        this.socket!.emit('add user', user, cb);
+    public selfInfo(cb?: AckCallback<UserData>): boolean {
+        this.socket!.emit('self info', cb);
 
         return true;
     }
 
-    public removeUser(cb?: AckCallback<boolean>): boolean {
-        this.socket!.emit('remove user', cb);
+    public addSelf(user: UserData, cb?: AckCallback<boolean>): boolean {
+        this.socket!.emit('add self', user, cb);
+
+        return true;
+    }
+
+    public removeSelf(cb?: AckCallback<boolean>): boolean {
+        this.socket!.emit('remove self', cb);
 
         return true;
     }

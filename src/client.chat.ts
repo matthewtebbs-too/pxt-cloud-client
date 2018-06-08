@@ -5,7 +5,7 @@
 */
 
 import * as Promise from 'bluebird';
-import { AckCallback, ChatAPI } from 'pxt-cloud';
+import { AckCallback, ChatAPI, MessageData } from 'pxt-cloud';
 
 import { Client } from './client.base';
 
@@ -16,8 +16,8 @@ export class ChatClient extends Client implements ChatAPI {
         return super.connect(uri, nsp || 'pxt-cloud.chat') as Promise<this>;
     }
 
-    public newMessage(msg: string, cb?: AckCallback<void>): boolean {
-        this.socket!.emit('new message', msg, cb);
+    public newMessage(msg: string | MessageData, cb?: AckCallback<void>): boolean {
+        this.socket!.emit('new message', typeof msg === 'object' ? msg : { text: msg }, cb);
 
         return true;
     }
@@ -25,8 +25,8 @@ export class ChatClient extends Client implements ChatAPI {
     protected _onConnect(socket: SocketIOClient.Socket) {
         super._onConnect(socket);
 
-        socket.on('new message', (msg: string) => {
-            debug(`user ${'unknown'} sent message '${msg}'`);
+        socket.on('new message', (msg: MessageData) => {
+            debug(`user ${'unknown'} sent message '${msg.text}'`);
         });
     }
 }

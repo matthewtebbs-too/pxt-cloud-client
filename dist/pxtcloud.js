@@ -144,7 +144,7 @@ var WorldClient = (function (_super) {
     WorldClient.prototype._onConnect = function (socket) {
         _super.prototype._onConnect.call(this, socket);
         socket.on('user joined', function (userId, user) {
-            debug("user " + userId + " joined (" + user + ")");
+            debug("user " + userId + " joined as '" + user.name + "'");
         });
         socket.on('user left', function (userId) {
             debug("user " + userId + " left");

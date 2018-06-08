@@ -28,7 +28,7 @@ export class WorldClient extends Client implements WorldAPI {
         super._onConnect(socket);
 
         socket.on('user joined', (userId: UserId, user: UserData) => {
-            debug(`user ${userId} joined (${user})`);
+            debug(`user ${userId} joined as '${user.name}'`);
         });
 
         socket.on('user left', (userId: UserId) => {

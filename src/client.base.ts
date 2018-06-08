@@ -5,13 +5,14 @@
 */
 
 import * as Promise from 'bluebird';
+import { EventEmitter } from 'events';
 import * as SocketIO from 'socket.io-client';
 
 import { ClientConfig } from './client.config';
 
 const debug = require('debug')('pxt-cloud:client');
 
-export class Client {
+export class Client extends EventEmitter {
     private _socket: SocketIOClient.Socket | null = null;
 
     public get isConnected(): boolean {

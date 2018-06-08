@@ -5,11 +5,10 @@
 */
 
 import * as Promise from 'bluebird';
-import { AckCallback, UserData, WorldAPI } from 'pxt-cloud';
+import { AckCallback, UserData, UserId, WorldAPI } from 'pxt-cloud';
 
 import { Client } from './client.base';
 
-// tslint:disable
 const debug = require('debug')('pxt-cloud:client.world');
 
 export class WorldClient extends Client implements WorldAPI {
@@ -18,18 +17,22 @@ export class WorldClient extends Client implements WorldAPI {
     }
 
     public addUser(user: UserData, cb?: AckCallback<boolean>): boolean {
-        return !!this.socket!.emit('user_add', user, cb);
+        return !!this.socket!.emit('add user', user, cb);
     }
 
     public removeUser(cb?: AckCallback<boolean>): boolean {
-        return !!this.socket!.emit('user_remove', cb);
+        return !!this.socket!.emit('remove user', cb);
     }
 
     protected _onConnect(socket: SocketIOClient.Socket) {
         super._onConnect(socket);
 
-        socket.on('login', () => {
-            debug(`client logged in as ${this.connectedId || 'unknown'}`);
+        socket.on('user joined', (userId: UserId, user: UserData) => {
+            debug(`user ${userId} joined (${user})`);
+        });
+
+        socket.on('user left', (userId: UserId) => {
+            debug(`user ${userId} left`);
         });
     }
 }

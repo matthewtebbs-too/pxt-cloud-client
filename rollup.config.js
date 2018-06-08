@@ -10,7 +10,7 @@
 var commonjs = require('rollup-plugin-commonjs');
 var resolve = require('rollup-plugin-node-resolve');
 
-var dependencies = Object.keys(require('./package.json').dependencies);
+var dependencies = Object.keys(require('./package.json').dependencies).concat('events');
 
 export default {
     rollup: require('rollup'),
@@ -23,7 +23,7 @@ export default {
     },
     plugins: [
         commonjs(),
-        resolve()
+        resolve({ preferBuiltins: true })
     ],
     external: dependencies
 };

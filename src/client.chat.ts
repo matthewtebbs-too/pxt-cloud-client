@@ -17,7 +17,11 @@ export class ChatClient extends Client implements ChatAPI {
     }
 
     public newMessage(msg: string | MessageData, cb?: AckCallback<void>): boolean {
-        this.socket!.emit('new message', typeof msg === 'object' ? msg : { text: msg }, cb);
+        if (!this.socket) {
+            return false;
+        }
+
+        this.socket.emit('new message', typeof msg === 'object' ? msg : { text: msg }, cb);
 
         return true;
     }

@@ -22,6 +22,9 @@ var ChatClient = (function (_super) {
         return _super.prototype.connect.call(this, uri, nsp || 'pxt-cloud.chat');
     };
     ChatClient.prototype.newMessage = function (msg, cb) {
+        if (!this.socket) {
+            return false;
+        }
         this.socket.emit('new message', typeof msg === 'object' ? msg : { text: msg }, cb);
         return true;
     };
@@ -90,14 +93,23 @@ var UsersClient = (function (_super) {
         return _super.prototype.connect.call(this, uri, nsp || 'pxt-cloud.users');
     };
     UsersClient.prototype.selfInfo = function (cb) {
+        if (!this.socket) {
+            return false;
+        }
         this.socket.emit('self info', cb);
         return true;
     };
     UsersClient.prototype.addSelf = function (user, cb) {
+        if (!this.socket) {
+            return false;
+        }
         this.socket.emit('add self', user, cb);
         return true;
     };
     UsersClient.prototype.removeSelf = function (cb) {
+        if (!this.socket) {
+            return false;
+        }
         this.socket.emit('remove self', cb);
         return true;
     };

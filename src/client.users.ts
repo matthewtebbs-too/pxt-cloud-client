@@ -17,19 +17,31 @@ export class UsersClient extends Client implements UsersAPI {
     }
 
     public selfInfo(cb?: AckCallback<UserData>): boolean {
-        this.socket!.emit('self info', cb);
+        if (!this.socket) {
+            return false;
+        }
+
+        this.socket.emit('self info', cb);
 
         return true;
     }
 
     public addSelf(user: UserData, cb?: AckCallback<boolean>): boolean {
-        this.socket!.emit('add self', user, cb);
+        if (!this.socket) {
+            return false;
+        }
+
+        this.socket.emit('add self', user, cb);
 
         return true;
     }
 
     public removeSelf(cb?: AckCallback<boolean>): boolean {
-        this.socket!.emit('remove self', cb);
+        if (!this.socket) {
+            return false;
+        }
+
+        this.socket.emit('remove self', cb);
 
         return true;
     }

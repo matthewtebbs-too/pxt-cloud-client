@@ -7,7 +7,7 @@
 import * as Promise from 'bluebird';
 import { AckCallback, UserData, UserId, UsersAPI } from 'pxt-cloud';
 
-import { Client } from './client.base';
+import { Client } from './client_';
 
 const debug = require('debug')('pxt-cloud:client.users');
 

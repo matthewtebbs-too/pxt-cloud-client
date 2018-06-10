@@ -1,6 +1,6 @@
 import * as Promise from 'bluebird';
-import { WorldAPI } from 'pxt-cloud';
+import * as API from 'pxt-cloud';
 import { Client } from './client_';
-export declare class WorldClient extends Client implements WorldAPI {
+export declare class WorldClient extends Client implements API.WorldAPI {
     connect(uri?: string, nsp?: string): Promise<this>;
 }

@@ -28,6 +28,6 @@ function testWorldAPI(api: WorldAPI) {
     /* no tests */
 }
 
-new PxtCloud.UsersClient().connect().then((api: UsersAPI) => testUsersAPI(api)).catch(debug);
-new PxtCloud.ChatClient().connect().then((api: ChatAPI) => testChatAPI(api)).catch(debug);
-new PxtCloud.WorldClient().connect().then((api: WorldAPI) => testWorldAPI(api)).catch(debug);
+new PxtCloud.UsersClient().connect().then(api => testUsersAPI(api)).catch(debug);
+new PxtCloud.ChatClient().connect().then(api => testChatAPI(api)).catch(debug);
+new PxtCloud.WorldClient().connect().then(api => testWorldAPI(api)).catch(debug);

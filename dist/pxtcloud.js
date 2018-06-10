@@ -56,9 +56,9 @@ var Client = (function (_super) {
                 _this._onConnect(socket);
                 resolve(_this);
             });
-            socket.on('error', function (err) {
-                debug(err);
-                reject(err);
+            socket.on('error', function (error) {
+                debug(error);
+                reject(error);
             });
         });
     };

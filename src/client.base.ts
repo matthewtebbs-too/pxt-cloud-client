@@ -43,9 +43,9 @@ export class Client extends EventEmitter {
                 resolve(this);
             });
 
-            socket.on('error', (err: Error) => {
-                debug(err);
-                reject(err);
+            socket.on('error', (error: Error) => {
+                debug(error);
+                reject(error);
             });
         });
     }

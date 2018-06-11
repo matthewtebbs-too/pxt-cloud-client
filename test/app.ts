@@ -15,12 +15,10 @@ const debug = require('debug')('pxt-cloud:test');
 function testUsersAPI(api: PxtCloud.UsersAPI) {
     api.addSelf({ name: 'Jilly Bean' }).then(value => debug(`user existed: %d`, value), debug);
     api.selfInfo().then(value => debug(`user: %o`, value), debug);
-    api.removeSelf().then(value => debug(`user existed: %d`, value), debug);
 }
 
 function testChatAPI(api: PxtCloud.ChatAPI) {
-    api.newMessage('hello').then(debug(`message sent`), debug);
-    api.newMessage('there').then(debug(`message sent`), debug);
+    api.newMessage('Hello world!').then(debug(`message sent`), debug);
 }
 
 function testWorldAPI(api: PxtCloud.WorldAPI) {

@@ -12,6 +12,6 @@ export declare class Client extends EventEmitter implements API.EventAPI {
     connect(uri?: string, nsp?: string): Promise<API.EventAPI>;
     dispose(): void;
     protected _onConnect(socket: SocketIOClient.Socket): void;
-    protected _promisedEmit<T>(event: string, ...args: any[]): Promise<T>;
+    protected _promisedEvent<T>(event: string, ...args: any[]): Promise<T>;
     protected _onDisconnect(): void;
 }

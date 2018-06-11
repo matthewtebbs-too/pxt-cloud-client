@@ -19,6 +19,8 @@ function testUsersAPI(api: PxtCloud.UsersAPI) {
 
 function testChatAPI(api: PxtCloud.ChatAPI) {
     api.newMessage('Hello world!').then(debug(`message queued`), debug);
+
+    api.on('new message', msg => debug(`${msg.name} says '${msg.text}'`));
 }
 
 function testWorldAPI(api: PxtCloud.WorldAPI) {

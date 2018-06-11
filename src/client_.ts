@@ -35,7 +35,7 @@ export class Client extends EventEmitter implements API.EventAPI {
 
         return new Promise((resolve, reject) => {
             const transports_ = typeof document !== 'undefined' ? ['polling', 'websocket'] : ['websocket'];
-            const socket = SocketIO(`${uri || ClientConfig.defaultUri || ''}/${nsp || ''}`, { transports: transports_ });
+            const socket = SocketIO(`${uri || ClientConfig.defaultUri || ''}/pxt-cloud${nsp ? `/${nsp}` : ''}`, { transports: transports_ });
 
             this._socket = socket;
 
@@ -68,7 +68,7 @@ export class Client extends EventEmitter implements API.EventAPI {
         });
     }
 
-    protected _promisedEvent<T>(event: string, ...args: any[]): Promise<T> {
+    protected _promiseEvent<T>(event: string, ...args: any[]): Promise<T> {
         return new Promise((resolve, reject) => {
             if (!this.socket) {
                 reject(Client._errorInvalidConnection);
@@ -85,6 +85,16 @@ export class Client extends EventEmitter implements API.EventAPI {
                     }
                 });
         });
+    }
+
+    protected _notifyEvent(event: string, ...args: any[]): boolean {
+        return this.emit(event, ...args);
+    }
+
+    protected _notifyReceivedEvent(event: string, socket: SocketIOClient.Socket) {
+        if (socket) {
+            socket.on(event, (...args: any[]) => this._notifyEvent(event, ...args));
+        }
     }
 
     protected _onDisconnect() {

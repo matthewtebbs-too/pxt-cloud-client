@@ -18,17 +18,15 @@ var ChatClient = (function (_super) {
     function ChatClient() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    ChatClient.prototype.connect = function (uri, nsp) {
-        return _super.prototype.connect.call(this, uri, nsp || 'pxt-cloud.chat');
+    ChatClient.prototype.connect = function (uri) {
+        return _super.prototype.connect.call(this, uri, 'chat');
     };
     ChatClient.prototype.newMessage = function (msg) {
-        return this._promisedEvent('new message', msg);
+        return this._promiseEvent('new message', msg);
     };
     ChatClient.prototype._onConnect = function (socket) {
         _super.prototype._onConnect.call(this, socket);
-        socket.on('new message', function (msg) {
-            debug("user '" + (msg.name || 'unknown') + "' says '" + msg.text + "'");
-        });
+        this._notifyReceivedEvent('new message', socket);
     };
     return ChatClient;
 }(client_1.Client));
@@ -85,26 +83,22 @@ var UsersClient = (function (_super) {
     function UsersClient() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    UsersClient.prototype.connect = function (uri, nsp) {
-        return _super.prototype.connect.call(this, uri, nsp || 'pxt-cloud.users');
+    UsersClient.prototype.connect = function (uri) {
+        return _super.prototype.connect.call(this, uri, 'users');
     };
     UsersClient.prototype.selfInfo = function () {
-        return this._promisedEvent('self info');
+        return this._promiseEvent('self info');
     };
     UsersClient.prototype.addSelf = function (user) {
-        return this._promisedEvent('add self', user);
+        return this._promiseEvent('add self', user);
     };
     UsersClient.prototype.removeSelf = function () {
-        return this._promisedEvent('remove self');
+        return this._promiseEvent('remove self');
     };
     UsersClient.prototype._onConnect = function (socket) {
         _super.prototype._onConnect.call(this, socket);
-        socket.on('user joined', function (userId, user) {
-            debug("user " + userId + " joined as '" + user.name + "'");
-        });
-        socket.on('user left', function (userId) {
-            debug("user " + userId + " left");
-        });
+        this._notifyReceivedEvent('user joined', socket);
+        this._notifyReceivedEvent('user left', socket);
     };
     return UsersClient;
 }(client_1.Client));
@@ -130,8 +124,8 @@ var WorldClient = (function (_super) {
     function WorldClient() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    WorldClient.prototype.connect = function (uri, nsp) {
-        return _super.prototype.connect.call(this, uri, nsp || 'pxt-cloud.world');
+    WorldClient.prototype.connect = function (uri) {
+        return _super.prototype.connect.call(this, uri, 'world');
     };
     return WorldClient;
 }(client_1.Client));
@@ -188,7 +182,7 @@ var Client = (function (_super) {
         this.dispose();
         return new Promise(function (resolve, reject) {
             var transports_ = typeof document !== 'undefined' ? ['polling', 'websocket'] : ['websocket'];
-            var socket = SocketIO((uri || client_config_1.ClientConfig.defaultUri || '') + "/" + (nsp || ''), { transports: transports_ });
+            var socket = SocketIO((uri || client_config_1.ClientConfig.defaultUri || '') + "/pxt-cloud" + (nsp ? "/" + nsp : ''), { transports: transports_ });
             _this._socket = socket;
             socket.on('connect', function () {
                 debug("connected");
@@ -214,7 +208,7 @@ var Client = (function (_super) {
             _this._onDisconnect();
         });
     };
-    Client.prototype._promisedEvent = function (event) {
+    Client.prototype._promiseEvent = function (event) {
         var _this = this;
         var args = [];
         for (var _i = 1; _i < arguments.length; _i++) {
@@ -235,6 +229,25 @@ var Client = (function (_super) {
                     }
                 }]));
         });
+    };
+    Client.prototype._notifyEvent = function (event) {
+        var args = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            args[_i - 1] = arguments[_i];
+        }
+        return this.emit.apply(this, [event].concat(args));
+    };
+    Client.prototype._notifyReceivedEvent = function (event, socket) {
+        var _this = this;
+        if (socket) {
+            socket.on(event, function () {
+                var args = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    args[_i] = arguments[_i];
+                }
+                return _this._notifyEvent.apply(_this, [event].concat(args));
+            });
+        }
     };
     Client.prototype._onDisconnect = function () {
     };

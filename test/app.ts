@@ -6,28 +6,27 @@
 
 require('dotenv').config();
 
-import { ChatAPI, UsersAPI, WorldAPI } from 'pxt-cloud';
+import * as PxtCloud from 'pxt-cloud';
 
-import * as PxtCloud from '..';
+import * as PxtCloudClient from '..';
 
 const debug = require('debug')('pxt-cloud:test');
 
-function testChatAPI(api: ChatAPI) {
-    api.newMessage('hello', debug);
-    api.newMessage('there', debug);
+function testUsersAPI(api: PxtCloud.UsersAPI) {
+    api.addSelf({ name: 'Jilly Bean' }).then(value => debug(`user existed: %d`, value), debug);
+    api.selfInfo().then(value => debug(`user: %o`, value), debug);
+    api.removeSelf().then(value => debug(`user existed: %d`, value), debug);
 }
 
-function testUsersAPI(api: UsersAPI) {
-    api.addSelf({ name: 'Jilly Bean' }, debug);
-    api.addSelf({ name: 'Polly Anna' }, debug);
-    api.selfInfo(debug);
-    api.removeSelf(debug);
+function testChatAPI(api: PxtCloud.ChatAPI) {
+    api.newMessage('hello').then(debug(`message sent`), debug);
+    api.newMessage('there').then(debug(`message sent`), debug);
 }
 
-function testWorldAPI(api: WorldAPI) {
+function testWorldAPI(api: PxtCloud.WorldAPI) {
     /* no tests */
 }
 
-new PxtCloud.UsersClient().connect().then(api => testUsersAPI(api)).catch(debug);
-new PxtCloud.ChatClient().connect().then(api => testChatAPI(api)).catch(debug);
-new PxtCloud.WorldClient().connect().then(api => testWorldAPI(api)).catch(debug);
+new PxtCloudClient.UsersClient().connect().then(testUsersAPI, debug);
+new PxtCloudClient.ChatClient().connect().then(testChatAPI, debug);
+new PxtCloudClient.WorldClient().connect().then(testWorldAPI, debug);

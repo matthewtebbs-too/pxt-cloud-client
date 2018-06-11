@@ -6,13 +6,16 @@
 
 import * as Promise from 'bluebird';
 import { EventEmitter } from 'events';
+import * as API from 'pxt-cloud';
 import * as SocketIO from 'socket.io-client';
 
 import { ClientConfig } from './client.config';
 
 const debug = require('debug')('pxt-cloud:client');
 
-export class Client extends EventEmitter {
+export class Client extends EventEmitter implements API.EventAPI {
+    protected static _errorInvalidConnection = new Error('Invalid client connection!');
+
     private _socket: SocketIOClient.Socket | null = null;
 
     public get isConnected(): boolean {
@@ -27,7 +30,7 @@ export class Client extends EventEmitter {
         return this._socket;
     }
 
-    public connect(uri?: string, nsp?: string): Promise<this> {
+    public connect(uri?: string, nsp?: string): Promise<API.EventAPI> {
         this.dispose();
 
         return new Promise((resolve, reject) => {
@@ -62,6 +65,25 @@ export class Client extends EventEmitter {
             debug(`disconnected`);
 
             this._onDisconnect();
+        });
+    }
+
+    protected _promisedEvent<T>(event: string, ...args: any[]): Promise<T> {
+        return new Promise((resolve, reject) => {
+            if (!this.socket) {
+                reject(Client._errorInvalidConnection);
+                return;
+            }
+
+            this.socket.emit(event, ...args,
+
+                (error: Error | null, reply?: T) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(reply);
+                    }
+                });
         });
     }
 

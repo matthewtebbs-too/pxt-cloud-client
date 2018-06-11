@@ -27,7 +27,7 @@
     "bluebird": "^2.11.0",
     "debug": "^3.1.0",
     "dotenv": "^5.0.1",
-    "pxt-cloud": "file:../pxt-cloud",
+    "pxt-cloud": "github:muddytummy/pxt-cloud",
     "query-string": "^5.1.1",
     "socket.io-client": "^2.1.1"
   },

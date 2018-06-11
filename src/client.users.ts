@@ -12,50 +12,20 @@ import { Client } from './client_';
 const debug = require('debug')('pxt-cloud:client.users');
 
 export class UsersClient extends Client implements API.UsersAPI {
-    public connect(uri?: string, nsp?: string): Promise<this> {
-        return super.connect(uri, nsp || 'pxt-cloud.users') as Promise<this>;
+    public connect(uri?: string, nsp?: string): Promise<API.UsersAPI> {
+        return super.connect(uri, nsp || 'pxt-cloud.users') as Promise<API.UsersAPI>;
     }
 
-    public selfInfo(cb?: API.AckCallback<API.UserData>): boolean {
-        if (!this.socket) {
-            return false;
-        }
-
-        this.socket.emit('self info', cb);
-
-        return true;
+    public selfInfo(): Promise<API.UserData> {
+        return this._promisedEvent('self info');
     }
 
-    public selfInfoAsync(): Promise<API.UserData> {
-        return API.promisefy(this, this.selfInfo);
+    public addSelf(user: API.UserData): Promise<boolean> {
+        return this._promisedEvent('add self', user);
     }
 
-    public addSelf(user: API.UserData, cb?: API.AckCallback<boolean>): boolean {
-        if (!this.socket) {
-            return false;
-        }
-
-        this.socket.emit('add self', user, cb);
-
-        return true;
-    }
-
-    public addSelfAsync(): Promise<boolean> {
-        return API.promisefy(this, this.addSelf);
-    }
-
-    public removeSelf(cb?: API.AckCallback<boolean>): boolean {
-        if (!this.socket) {
-            return false;
-        }
-
-        this.socket.emit('remove self', cb);
-
-        return true;
-    }
-
-    public removeSelfAsync(): Promise<boolean> {
-        return API.promisefy(this, this.removeSelf);
+    public removeSelf(): Promise<boolean> {
+        return this._promisedEvent('remove self');
     }
 
     protected _onConnect(socket: SocketIOClient.Socket) {

@@ -46,7 +46,7 @@ export class Client extends EventEmitter implements API.EventAPI {
             });
 
             socket.on('error', (error: Error) => {
-                debug(error);
+                debug(`${error.message}\n`);
                 reject(error);
             });
         });

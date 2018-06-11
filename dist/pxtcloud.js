@@ -190,7 +190,7 @@ var Client = (function (_super) {
                 resolve(_this);
             });
             socket.on('error', function (error) {
-                debug(error);
+                debug(error.message + "\n");
                 reject(error);
             });
         });

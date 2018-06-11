@@ -41,7 +41,6 @@ export class Client extends EventEmitter implements API.EventAPI {
 
             socket.on('connect', () => {
                 debug(`connected`);
-
                 this._onConnect(socket);
                 resolve(this);
             });
@@ -63,7 +62,6 @@ export class Client extends EventEmitter implements API.EventAPI {
     protected _onConnect(socket: SocketIOClient.Socket) {
         socket.on('disconnect', () => {
             debug(`disconnected`);
-
             this._onDisconnect();
         });
     }

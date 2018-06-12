@@ -9,7 +9,7 @@ import * as API from 'pxt-cloud';
 import { ChatClient } from './client.chat';
 import { UsersClient } from './client.users';
 import { WorldClient } from './client.world';
-import { Client, Clients } from './client_';
+import { Clients } from './client_';
 
 export * from './client_';
 export * from './client.chat';

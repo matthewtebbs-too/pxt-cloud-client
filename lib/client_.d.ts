@@ -18,3 +18,6 @@ export declare abstract class Client extends EventEmitter implements API.EventAP
     protected _notifyReceivedEvent(event: string, socket: SocketIOClient.Socket): void;
     protected _onDisconnect(): void;
 }
+export declare type Clients = {
+    [E in keyof API.PublicAPI]: Client & API.PublicAPI[E];
+};

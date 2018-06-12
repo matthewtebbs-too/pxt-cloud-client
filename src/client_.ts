@@ -111,3 +111,5 @@ export abstract class Client extends EventEmitter implements API.EventAPI {
         /* do nothing */
     }
 }
+
+export type Clients = { [E in keyof API.PublicAPI]: Client & API.PublicAPI[E] };

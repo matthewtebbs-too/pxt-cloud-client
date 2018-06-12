@@ -277,13 +277,45 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
+var client_chat_1 = require("./client.chat");
+var client_users_1 = require("./client.users");
+var client_world_1 = require("./client.world");
 __export(require("./client_"));
 __export(require("./client.chat"));
-__export(require("./client.config"));
 __export(require("./client.users"));
 __export(require("./client.world"));
+var debug = require('debug')('pxt-cloud:clients');
+function makeAPIConnection(uri) {
+    var clients = {
+        chat: new client_chat_1.ChatClient(),
+        users: new client_users_1.UsersClient(),
+        world: new client_world_1.WorldClient(),
+    };
+    return new Promise(function (resolve, reject) {
+        Promise.all([
+            clients.chat.connect(uri),
+            clients.users.connect(uri),
+            clients.world.connect(uri),
+        ])
+            .then(function (_a) {
+            var chat = _a[0], users = _a[1], world = _a[2];
+            var api = { chat: chat, users: users, world: world };
+            api['dispose'] = function () { return Object.keys(clients).forEach(function (name) { return clients[name].dispose(); }); };
+            resolve(api);
+        })
+            .catch(reject);
+    });
+}
+exports.makeAPIConnection = makeAPIConnection;
+function disposeAPIConnection(api) {
+    var dispose = api['dispose'];
+    if (undefined !== dispose && typeof dispose === 'function') {
+        dispose();
+    }
+}
+exports.disposeAPIConnection = disposeAPIConnection;
 
-},{"./client.chat":1,"./client.config":2,"./client.users":3,"./client.world":4,"./client_":5}],7:[function(require,module,exports){
+},{"./client.chat":1,"./client.users":3,"./client.world":4,"./client_":5,"debug":20}],7:[function(require,module,exports){
 "use strict";
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];

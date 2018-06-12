@@ -27,6 +27,10 @@ function testWorldAPI(api: PxtCloud.WorldAPI) {
     /* no tests */
 }
 
-new PxtCloudClient.UsersClient().connect().then(testUsersAPI, debug);
-new PxtCloudClient.ChatClient().connect().then(testChatAPI, debug);
-new PxtCloudClient.WorldClient().connect().then(testWorldAPI, debug);
+function test(api: PxtCloud.PublicAPI) {
+    testUsersAPI(api.users);
+    testChatAPI(api.chat);
+    testWorldAPI(api.world);
+}
+
+PxtCloudClient.makeAPIConnection().then(test, debug);

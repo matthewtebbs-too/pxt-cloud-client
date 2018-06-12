@@ -9,10 +9,14 @@ import * as API from 'pxt-cloud';
 
 import { Client } from './client_';
 
-const debug = require('debug')('pxt-cloud:client.chat');
+const debug = require('debug')('pxt-cloud:client:chat');
 
 export class ChatClient extends Client implements API.ChatAPI {
+    protected _debug: any = debug;
+
     public connect(uri?: string): Promise<API.ChatAPI> {
+        debug('chat client foor');
+
         return super.connect(uri, 'chat') as Promise<API.ChatAPI>;
     }
 

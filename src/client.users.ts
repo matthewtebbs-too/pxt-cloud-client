@@ -9,9 +9,11 @@ import * as API from 'pxt-cloud';
 
 import { Client } from './client_';
 
-const debug = require('debug')('pxt-cloud:client.users');
+const debug = require('debug')('pxt-cloud:client:users');
 
 export class UsersClient extends Client implements API.UsersAPI {
+    protected _debug: any = debug;
+
     public connect(uri?: string): Promise<API.UsersAPI> {
         return super.connect(uri, 'users') as Promise<API.UsersAPI>;
     }

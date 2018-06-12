@@ -11,10 +11,10 @@ import * as SocketIO from 'socket.io-client';
 
 import { ClientConfig } from './client.config';
 
-const debug = require('debug')('pxt-cloud:client');
-
-export class Client extends EventEmitter implements API.EventAPI {
+export abstract class Client extends EventEmitter implements API.EventAPI {
     protected static _errorInvalidConnection = new Error('Invalid client connection!');
+
+    protected abstract _debug: any;
 
     private _socket: SocketIOClient.Socket | null = null;
 
@@ -40,13 +40,25 @@ export class Client extends EventEmitter implements API.EventAPI {
             this._socket = socket;
 
             socket.on('connect', () => {
-                debug(`connected`);
+                this._debug(`client connected`);
                 this._onConnect(socket);
                 resolve(this);
             });
 
+            socket.on('connect_error', (error: Error) => {
+                this._debug(`client connect failed [${typeof error === 'string' ? error : error.message}]`);
+            });
+
+            socket.on('reconnecting', (attempt: number) => {
+                this._debug(`client reconnecting with attempt ${attempt}`);
+            });
+
+            socket.on('reconnect_failed', () => {
+                this._debug(`lient max retry attempts reached`);
+            });
+
             socket.on('error', (error: Error) => {
-                debug(`${error.message}\n`);
+                this._debug(`client failed [${typeof error === 'string' ? error : error.message}]`);
                 reject(error);
             });
         });
@@ -61,7 +73,7 @@ export class Client extends EventEmitter implements API.EventAPI {
 
     protected _onConnect(socket: SocketIOClient.Socket) {
         socket.on('disconnect', () => {
-            debug(`disconnected`);
+            this._debug(`client disconnected`);
             this._onDisconnect();
         });
     }

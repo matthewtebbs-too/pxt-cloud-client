@@ -12,13 +12,16 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var client_1 = require("./client_");
-var debug = require('debug')('pxt-cloud:client.chat');
+var debug = require('debug')('pxt-cloud:client:chat');
 var ChatClient = (function (_super) {
     __extends(ChatClient, _super);
     function ChatClient() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this._debug = debug;
+        return _this;
     }
     ChatClient.prototype.connect = function (uri) {
+        debug('chat client foor');
         return _super.prototype.connect.call(this, uri, 'chat');
     };
     ChatClient.prototype.newMessage = function (msg) {
@@ -77,11 +80,13 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var client_1 = require("./client_");
-var debug = require('debug')('pxt-cloud:client.users');
+var debug = require('debug')('pxt-cloud:client:users');
 var UsersClient = (function (_super) {
     __extends(UsersClient, _super);
     function UsersClient() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this._debug = debug;
+        return _this;
     }
     UsersClient.prototype.connect = function (uri) {
         return _super.prototype.connect.call(this, uri, 'users');
@@ -118,11 +123,13 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var client_1 = require("./client_");
-var debug = require('debug')('pxt-cloud:client.world');
+var debug = require('debug')('pxt-cloud:client:world');
 var WorldClient = (function (_super) {
     __extends(WorldClient, _super);
     function WorldClient() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this._debug = debug;
+        return _this;
     }
     WorldClient.prototype.connect = function (uri) {
         return _super.prototype.connect.call(this, uri, 'world');
@@ -148,7 +155,6 @@ var Promise = require("bluebird");
 var events_1 = require("events");
 var SocketIO = require("socket.io-client");
 var client_config_1 = require("./client.config");
-var debug = require('debug')('pxt-cloud:client');
 var Client = (function (_super) {
     __extends(Client, _super);
     function Client() {
@@ -185,12 +191,21 @@ var Client = (function (_super) {
             var socket = SocketIO((uri || client_config_1.ClientConfig.defaultUri || '') + "/pxt-cloud" + (nsp ? "/" + nsp : ''), { transports: transports_ });
             _this._socket = socket;
             socket.on('connect', function () {
-                debug("connected");
+                _this._debug("client connected");
                 _this._onConnect(socket);
                 resolve(_this);
             });
+            socket.on('connect_error', function (error) {
+                _this._debug("client connect failed [" + (typeof error === 'string' ? error : error.message) + "]");
+            });
+            socket.on('reconnecting', function (attempt) {
+                _this._debug("client reconnecting with attempt " + attempt);
+            });
+            socket.on('reconnect_failed', function () {
+                _this._debug("lient max retry attempts reached");
+            });
             socket.on('error', function (error) {
-                debug(error.message + "\n");
+                _this._debug("client failed [" + (typeof error === 'string' ? error : error.message) + "]");
                 reject(error);
             });
         });
@@ -204,7 +219,7 @@ var Client = (function (_super) {
     Client.prototype._onConnect = function (socket) {
         var _this = this;
         socket.on('disconnect', function () {
-            debug("disconnected");
+            _this._debug("client disconnected");
             _this._onDisconnect();
         });
     };
@@ -256,7 +271,7 @@ var Client = (function (_super) {
 }(events_1.EventEmitter));
 exports.Client = Client;
 
-},{"./client.config":2,"bluebird":14,"debug":20,"events":35,"socket.io-client":47}],6:[function(require,module,exports){
+},{"./client.config":2,"bluebird":14,"events":35,"socket.io-client":47}],6:[function(require,module,exports){
 "use strict";
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];

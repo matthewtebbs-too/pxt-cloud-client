@@ -3,8 +3,9 @@
 import * as Promise from 'bluebird';
 import { EventEmitter } from 'events';
 import * as API from 'pxt-cloud';
-export declare class Client extends EventEmitter implements API.EventAPI {
+export declare abstract class Client extends EventEmitter implements API.EventAPI {
     protected static _errorInvalidConnection: Error;
+    protected abstract _debug: any;
     private _socket;
     readonly isConnected: boolean;
     readonly connectedId: string | null;

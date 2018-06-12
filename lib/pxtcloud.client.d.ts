@@ -4,6 +4,6 @@
     Copyright (c) 2018 MuddyTummy Software LLC
 */
 
-export * from './clients';
+export * from './index';
 
 export as namespace PxtCloudClient;

@@ -6,4 +6,4 @@
 
 export * from './clients';
 
-export as namespace PxtCloud;
+export as namespace PxtCloudClient;

@@ -48,13 +48,14 @@ var enabled;
 function isTrue(value) {
     return !!value && null !== value.trim().match(/^(true|1|)$/);
 }
-if (typeof location !== 'undefined' && location.search) {
-    var parsedQueryString = require('query-string').parse(location.search);
-    hostname = parsedQueryString.hostname;
-    port = parsedQueryString.port;
-    enabled = isTrue(parsedQueryString.cloudenabled);
+var env;
+if (typeof localStorage !== 'undefined') {
+    env = localStorage;
 }
 else if (typeof process !== 'undefined' && process.env) {
+    env = process.env;
+}
+if (!!env) {
     hostname = process.env.PXT_CLOUD_HOSTNAME;
     port = process.env.PXT_CLOUD_PORT;
     enabled = isTrue(process.env.PXT_CLOUD_ENABLED);
@@ -78,7 +79,7 @@ exports.ClientConfig = ClientConfig;
 debug("Configuration\n    hostname:   " + ClientConfig.hostname + "\n    port:       " + ClientConfig.port + "\n    enabled:    " + (ClientConfig.enabled ? 'true' : 'false'));
 
 }).call(this,require('_process'))
-},{"_process":46,"debug":21,"query-string":47}],4:[function(require,module,exports){
+},{"_process":44,"debug":21}],4:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -290,7 +291,7 @@ var Client = (function (_super) {
 }(events_1.EventEmitter));
 exports.Client = Client;
 
-},{"./client.config":3,"bluebird":15,"events":36,"socket.io-client":48}],7:[function(require,module,exports){
+},{"./client.config":3,"bluebird":15,"events":35,"socket.io-client":45}],7:[function(require,module,exports){
 "use strict";
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
@@ -5708,7 +5709,7 @@ module.exports = ret;
 },{"./es5.js":14}]},{},[4])(4)
 });                    ;if (typeof window !== 'undefined' && window !== null) {                               window.P = window.Promise;                                                     } else if (typeof self !== 'undefined' && self !== null) {                             self.P = self.Promise;                                                         }
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
-},{"_process":46,"timers":57}],16:[function(require,module,exports){
+},{"_process":44,"timers":53}],16:[function(require,module,exports){
 
 },{}],17:[function(require,module,exports){
 /*!
@@ -7448,7 +7449,7 @@ function numberIsNaN (obj) {
   return obj !== obj // eslint-disable-line no-self-compare
 }
 
-},{"base64-js":13,"ieee754":39}],18:[function(require,module,exports){
+},{"base64-js":13,"ieee754":38}],18:[function(require,module,exports){
 /**
  * Slice reference.
  */
@@ -7845,7 +7846,7 @@ function localstorage() {
 }
 
 }).call(this,require('_process'))
-},{"./debug":22,"_process":46}],22:[function(require,module,exports){
+},{"./debug":22,"_process":44}],22:[function(require,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -8072,103 +8073,7 @@ function coerce(val) {
   return val;
 }
 
-},{"ms":42}],23:[function(require,module,exports){
-'use strict';
-var token = '%[a-f0-9]{2}';
-var singleMatcher = new RegExp(token, 'gi');
-var multiMatcher = new RegExp('(' + token + ')+', 'gi');
-
-function decodeComponents(components, split) {
-	try {
-		// Try to decode the entire string first
-		return decodeURIComponent(components.join(''));
-	} catch (err) {
-		// Do nothing
-	}
-
-	if (components.length === 1) {
-		return components;
-	}
-
-	split = split || 1;
-
-	// Split the array in 2 parts
-	var left = components.slice(0, split);
-	var right = components.slice(split);
-
-	return Array.prototype.concat.call([], decodeComponents(left), decodeComponents(right));
-}
-
-function decode(input) {
-	try {
-		return decodeURIComponent(input);
-	} catch (err) {
-		var tokens = input.match(singleMatcher);
-
-		for (var i = 1; i < tokens.length; i++) {
-			input = decodeComponents(tokens, i).join('');
-
-			tokens = input.match(singleMatcher);
-		}
-
-		return input;
-	}
-}
-
-function customDecodeURIComponent(input) {
-	// Keep track of all the replacements and prefill the map with the `BOM`
-	var replaceMap = {
-		'%FE%FF': '\uFFFD\uFFFD',
-		'%FF%FE': '\uFFFD\uFFFD'
-	};
-
-	var match = multiMatcher.exec(input);
-	while (match) {
-		try {
-			// Decode as big chunks as possible
-			replaceMap[match[0]] = decodeURIComponent(match[0]);
-		} catch (err) {
-			var result = decode(match[0]);
-
-			if (result !== match[0]) {
-				replaceMap[match[0]] = result;
-			}
-		}
-
-		match = multiMatcher.exec(input);
-	}
-
-	// Add `%C2` at the end of the map to make sure it does not replace the combinator before everything else
-	replaceMap['%C2'] = '\uFFFD';
-
-	var entries = Object.keys(replaceMap);
-
-	for (var i = 0; i < entries.length; i++) {
-		// Replace all decoded components
-		var key = entries[i];
-		input = input.replace(new RegExp(key, 'g'), replaceMap[key]);
-	}
-
-	return input;
-}
-
-module.exports = function (encodedURI) {
-	if (typeof encodedURI !== 'string') {
-		throw new TypeError('Expected `encodedURI` to be of type `string`, got `' + typeof encodedURI + '`');
-	}
-
-	try {
-		encodedURI = encodedURI.replace(/\+/g, ' ');
-
-		// Try the built in decoder first
-		return decodeURIComponent(encodedURI);
-	} catch (err) {
-		// Fallback to a more advanced decoder
-		return customDecodeURIComponent(encodedURI);
-	}
-};
-
-},{}],24:[function(require,module,exports){
+},{"ms":41}],23:[function(require,module,exports){
 
 module.exports = require('./socket');
 
@@ -8180,7 +8085,7 @@ module.exports = require('./socket');
  */
 module.exports.parser = require('engine.io-parser');
 
-},{"./socket":25,"engine.io-parser":33}],25:[function(require,module,exports){
+},{"./socket":24,"engine.io-parser":32}],24:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -8927,7 +8832,7 @@ Socket.prototype.filterUpgrades = function (upgrades) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./transport":26,"./transports/index":27,"component-emitter":19,"debug":21,"engine.io-parser":33,"indexof":40,"parseqs":44,"parseuri":45}],26:[function(require,module,exports){
+},{"./transport":25,"./transports/index":26,"component-emitter":19,"debug":21,"engine.io-parser":32,"indexof":39,"parseqs":42,"parseuri":43}],25:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -9086,7 +8991,7 @@ Transport.prototype.onClose = function () {
   this.emit('close');
 };
 
-},{"component-emitter":19,"engine.io-parser":33}],27:[function(require,module,exports){
+},{"component-emitter":19,"engine.io-parser":32}],26:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies
@@ -9143,7 +9048,7 @@ function polling (opts) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling-jsonp":28,"./polling-xhr":29,"./websocket":31,"xmlhttprequest-ssl":32}],28:[function(require,module,exports){
+},{"./polling-jsonp":27,"./polling-xhr":28,"./websocket":30,"xmlhttprequest-ssl":31}],27:[function(require,module,exports){
 (function (global){
 
 /**
@@ -9378,7 +9283,7 @@ JSONPPolling.prototype.doWrite = function (data, fn) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":30,"component-inherit":20}],29:[function(require,module,exports){
+},{"./polling":29,"component-inherit":20}],28:[function(require,module,exports){
 (function (global){
 /**
  * Module requirements.
@@ -9794,7 +9699,7 @@ function unloadHandler () {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":30,"component-emitter":19,"component-inherit":20,"debug":21,"xmlhttprequest-ssl":32}],30:[function(require,module,exports){
+},{"./polling":29,"component-emitter":19,"component-inherit":20,"debug":21,"xmlhttprequest-ssl":31}],29:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -10041,7 +9946,7 @@ Polling.prototype.uri = function () {
   return schema + '://' + (ipv6 ? '[' + this.hostname + ']' : this.hostname) + port + this.path + query;
 };
 
-},{"../transport":26,"component-inherit":20,"debug":21,"engine.io-parser":33,"parseqs":44,"xmlhttprequest-ssl":32,"yeast":59}],31:[function(require,module,exports){
+},{"../transport":25,"component-inherit":20,"debug":21,"engine.io-parser":32,"parseqs":42,"xmlhttprequest-ssl":31,"yeast":55}],30:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -10331,7 +10236,7 @@ WS.prototype.check = function () {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../transport":26,"component-inherit":20,"debug":21,"engine.io-parser":33,"parseqs":44,"ws":16,"yeast":59}],32:[function(require,module,exports){
+},{"../transport":25,"component-inherit":20,"debug":21,"engine.io-parser":32,"parseqs":42,"ws":16,"yeast":55}],31:[function(require,module,exports){
 (function (global){
 // browser shim for xmlhttprequest module
 
@@ -10372,7 +10277,7 @@ module.exports = function (opts) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"has-cors":38}],33:[function(require,module,exports){
+},{"has-cors":37}],32:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -10982,7 +10887,7 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./keys":34,"./utf8":35,"after":9,"arraybuffer.slice":10,"base64-arraybuffer":12,"blob":14,"has-binary2":37}],34:[function(require,module,exports){
+},{"./keys":33,"./utf8":34,"after":9,"arraybuffer.slice":10,"base64-arraybuffer":12,"blob":14,"has-binary2":36}],33:[function(require,module,exports){
 
 /**
  * Gets the keys for an object.
@@ -11003,7 +10908,7 @@ module.exports = Object.keys || function keys (obj){
   return arr;
 };
 
-},{}],35:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 (function (global){
 /*! https://mths.be/utf8js v2.1.2 by @mathias */
 ;(function(root) {
@@ -11262,7 +11167,7 @@ module.exports = Object.keys || function keys (obj){
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],36:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -11787,7 +11692,7 @@ function functionBindPolyfill(context) {
   };
 }
 
-},{}],37:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 (function (Buffer){
 /* global Blob File */
 
@@ -11855,7 +11760,7 @@ function hasBinary (obj) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":17,"isarray":41}],38:[function(require,module,exports){
+},{"buffer":17,"isarray":40}],37:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -11874,7 +11779,7 @@ try {
   module.exports = false;
 }
 
-},{}],39:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = (nBytes * 8) - mLen - 1
@@ -11960,7 +11865,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],40:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 
 var indexOf = [].indexOf;
 
@@ -11971,14 +11876,14 @@ module.exports = function(arr, obj){
   }
   return -1;
 };
-},{}],41:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
-},{}],42:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 /**
  * Helpers.
  */
@@ -12132,99 +12037,7 @@ function plural(ms, n, name) {
   return Math.ceil(ms / n) + ' ' + name + 's';
 }
 
-},{}],43:[function(require,module,exports){
-/*
-object-assign
-(c) Sindre Sorhus
-@license MIT
-*/
-
-'use strict';
-/* eslint-disable no-unused-vars */
-var getOwnPropertySymbols = Object.getOwnPropertySymbols;
-var hasOwnProperty = Object.prototype.hasOwnProperty;
-var propIsEnumerable = Object.prototype.propertyIsEnumerable;
-
-function toObject(val) {
-	if (val === null || val === undefined) {
-		throw new TypeError('Object.assign cannot be called with null or undefined');
-	}
-
-	return Object(val);
-}
-
-function shouldUseNative() {
-	try {
-		if (!Object.assign) {
-			return false;
-		}
-
-		// Detect buggy property enumeration order in older V8 versions.
-
-		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
-		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
-		test1[5] = 'de';
-		if (Object.getOwnPropertyNames(test1)[0] === '5') {
-			return false;
-		}
-
-		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-		var test2 = {};
-		for (var i = 0; i < 10; i++) {
-			test2['_' + String.fromCharCode(i)] = i;
-		}
-		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
-			return test2[n];
-		});
-		if (order2.join('') !== '0123456789') {
-			return false;
-		}
-
-		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-		var test3 = {};
-		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
-			test3[letter] = letter;
-		});
-		if (Object.keys(Object.assign({}, test3)).join('') !==
-				'abcdefghijklmnopqrst') {
-			return false;
-		}
-
-		return true;
-	} catch (err) {
-		// We don't expect any of the above to throw, but better to be safe.
-		return false;
-	}
-}
-
-module.exports = shouldUseNative() ? Object.assign : function (target, source) {
-	var from;
-	var to = toObject(target);
-	var symbols;
-
-	for (var s = 1; s < arguments.length; s++) {
-		from = Object(arguments[s]);
-
-		for (var key in from) {
-			if (hasOwnProperty.call(from, key)) {
-				to[key] = from[key];
-			}
-		}
-
-		if (getOwnPropertySymbols) {
-			symbols = getOwnPropertySymbols(from);
-			for (var i = 0; i < symbols.length; i++) {
-				if (propIsEnumerable.call(from, symbols[i])) {
-					to[symbols[i]] = from[symbols[i]];
-				}
-			}
-		}
-	}
-
-	return to;
-};
-
-},{}],44:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 /**
  * Compiles a querystring
  * Returns string representation of the object
@@ -12263,7 +12076,7 @@ exports.decode = function(qs){
   return qry;
 };
 
-},{}],45:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -12304,7 +12117,7 @@ module.exports = function parseuri(str) {
     return uri;
 };
 
-},{}],46:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -12490,233 +12303,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],47:[function(require,module,exports){
-'use strict';
-var strictUriEncode = require('strict-uri-encode');
-var objectAssign = require('object-assign');
-var decodeComponent = require('decode-uri-component');
-
-function encoderForArrayFormat(opts) {
-	switch (opts.arrayFormat) {
-		case 'index':
-			return function (key, value, index) {
-				return value === null ? [
-					encode(key, opts),
-					'[',
-					index,
-					']'
-				].join('') : [
-					encode(key, opts),
-					'[',
-					encode(index, opts),
-					']=',
-					encode(value, opts)
-				].join('');
-			};
-
-		case 'bracket':
-			return function (key, value) {
-				return value === null ? encode(key, opts) : [
-					encode(key, opts),
-					'[]=',
-					encode(value, opts)
-				].join('');
-			};
-
-		default:
-			return function (key, value) {
-				return value === null ? encode(key, opts) : [
-					encode(key, opts),
-					'=',
-					encode(value, opts)
-				].join('');
-			};
-	}
-}
-
-function parserForArrayFormat(opts) {
-	var result;
-
-	switch (opts.arrayFormat) {
-		case 'index':
-			return function (key, value, accumulator) {
-				result = /\[(\d*)\]$/.exec(key);
-
-				key = key.replace(/\[\d*\]$/, '');
-
-				if (!result) {
-					accumulator[key] = value;
-					return;
-				}
-
-				if (accumulator[key] === undefined) {
-					accumulator[key] = {};
-				}
-
-				accumulator[key][result[1]] = value;
-			};
-
-		case 'bracket':
-			return function (key, value, accumulator) {
-				result = /(\[\])$/.exec(key);
-				key = key.replace(/\[\]$/, '');
-
-				if (!result) {
-					accumulator[key] = value;
-					return;
-				} else if (accumulator[key] === undefined) {
-					accumulator[key] = [value];
-					return;
-				}
-
-				accumulator[key] = [].concat(accumulator[key], value);
-			};
-
-		default:
-			return function (key, value, accumulator) {
-				if (accumulator[key] === undefined) {
-					accumulator[key] = value;
-					return;
-				}
-
-				accumulator[key] = [].concat(accumulator[key], value);
-			};
-	}
-}
-
-function encode(value, opts) {
-	if (opts.encode) {
-		return opts.strict ? strictUriEncode(value) : encodeURIComponent(value);
-	}
-
-	return value;
-}
-
-function keysSorter(input) {
-	if (Array.isArray(input)) {
-		return input.sort();
-	} else if (typeof input === 'object') {
-		return keysSorter(Object.keys(input)).sort(function (a, b) {
-			return Number(a) - Number(b);
-		}).map(function (key) {
-			return input[key];
-		});
-	}
-
-	return input;
-}
-
-function extract(str) {
-	var queryStart = str.indexOf('?');
-	if (queryStart === -1) {
-		return '';
-	}
-	return str.slice(queryStart + 1);
-}
-
-function parse(str, opts) {
-	opts = objectAssign({arrayFormat: 'none'}, opts);
-
-	var formatter = parserForArrayFormat(opts);
-
-	// Create an object with no prototype
-	// https://github.com/sindresorhus/query-string/issues/47
-	var ret = Object.create(null);
-
-	if (typeof str !== 'string') {
-		return ret;
-	}
-
-	str = str.trim().replace(/^[?#&]/, '');
-
-	if (!str) {
-		return ret;
-	}
-
-	str.split('&').forEach(function (param) {
-		var parts = param.replace(/\+/g, ' ').split('=');
-		// Firefox (pre 40) decodes `%3D` to `=`
-		// https://github.com/sindresorhus/query-string/pull/37
-		var key = parts.shift();
-		var val = parts.length > 0 ? parts.join('=') : undefined;
-
-		// missing `=` should be `null`:
-		// http://w3.org/TR/2012/WD-url-20120524/#collect-url-parameters
-		val = val === undefined ? null : decodeComponent(val);
-
-		formatter(decodeComponent(key), val, ret);
-	});
-
-	return Object.keys(ret).sort().reduce(function (result, key) {
-		var val = ret[key];
-		if (Boolean(val) && typeof val === 'object' && !Array.isArray(val)) {
-			// Sort object keys, not values
-			result[key] = keysSorter(val);
-		} else {
-			result[key] = val;
-		}
-
-		return result;
-	}, Object.create(null));
-}
-
-exports.extract = extract;
-exports.parse = parse;
-
-exports.stringify = function (obj, opts) {
-	var defaults = {
-		encode: true,
-		strict: true,
-		arrayFormat: 'none'
-	};
-
-	opts = objectAssign(defaults, opts);
-
-	if (opts.sort === false) {
-		opts.sort = function () {};
-	}
-
-	var formatter = encoderForArrayFormat(opts);
-
-	return obj ? Object.keys(obj).sort(opts.sort).map(function (key) {
-		var val = obj[key];
-
-		if (val === undefined) {
-			return '';
-		}
-
-		if (val === null) {
-			return encode(key, opts);
-		}
-
-		if (Array.isArray(val)) {
-			var result = [];
-
-			val.slice().forEach(function (val2) {
-				if (val2 === undefined) {
-					return;
-				}
-
-				result.push(formatter(key, val2, result.length));
-			});
-
-			return result.join('&');
-		}
-
-		return encode(key, opts) + '=' + encode(val, opts);
-	}).filter(function (x) {
-		return x.length > 0;
-	}).join('&') : '';
-};
-
-exports.parseUrl = function (str, opts) {
-	return {
-		url: str.split('?')[0] || '',
-		query: parse(extract(str), opts)
-	};
-};
-
-},{"decode-uri-component":23,"object-assign":43,"strict-uri-encode":56}],48:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -12812,7 +12399,7 @@ exports.connect = lookup;
 exports.Manager = require('./manager');
 exports.Socket = require('./socket');
 
-},{"./manager":49,"./socket":51,"./url":52,"debug":21,"socket.io-parser":54}],49:[function(require,module,exports){
+},{"./manager":46,"./socket":48,"./url":49,"debug":21,"socket.io-parser":51}],46:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -13387,7 +12974,7 @@ Manager.prototype.onreconnect = function () {
   this.emitAll('reconnect', attempt);
 };
 
-},{"./on":50,"./socket":51,"backo2":11,"component-bind":18,"component-emitter":19,"debug":21,"engine.io-client":24,"indexof":40,"socket.io-parser":54}],50:[function(require,module,exports){
+},{"./on":47,"./socket":48,"backo2":11,"component-bind":18,"component-emitter":19,"debug":21,"engine.io-client":23,"indexof":39,"socket.io-parser":51}],47:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -13413,7 +13000,7 @@ function on (obj, ev, fn) {
   };
 }
 
-},{}],51:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -13853,7 +13440,7 @@ Socket.prototype.binary = function (binary) {
   return this;
 };
 
-},{"./on":50,"component-bind":18,"component-emitter":19,"debug":21,"has-binary2":37,"parseqs":44,"socket.io-parser":54,"to-array":58}],52:[function(require,module,exports){
+},{"./on":47,"component-bind":18,"component-emitter":19,"debug":21,"has-binary2":36,"parseqs":42,"socket.io-parser":51,"to-array":54}],49:[function(require,module,exports){
 (function (global){
 
 /**
@@ -13932,7 +13519,7 @@ function url (uri, loc) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"debug":21,"parseuri":45}],53:[function(require,module,exports){
+},{"debug":21,"parseuri":43}],50:[function(require,module,exports){
 (function (global){
 /*global Blob,File*/
 
@@ -14077,7 +13664,7 @@ exports.removeBlobs = function(data, callback) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./is-buffer":55,"isarray":41}],54:[function(require,module,exports){
+},{"./is-buffer":52,"isarray":40}],51:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -14496,7 +14083,7 @@ function error(msg) {
   };
 }
 
-},{"./binary":53,"./is-buffer":55,"component-emitter":19,"debug":21,"isarray":41}],55:[function(require,module,exports){
+},{"./binary":50,"./is-buffer":52,"component-emitter":19,"debug":21,"isarray":40}],52:[function(require,module,exports){
 (function (global){
 
 module.exports = isBuf;
@@ -14524,15 +14111,7 @@ function isBuf(obj) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],56:[function(require,module,exports){
-'use strict';
-module.exports = function (str) {
-	return encodeURIComponent(str).replace(/[!'()*]/g, function (c) {
-		return '%' + c.charCodeAt(0).toString(16).toUpperCase();
-	});
-};
-
-},{}],57:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 (function (setImmediate,clearImmediate){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
@@ -14611,7 +14190,7 @@ exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate :
   delete immediateIds[id];
 };
 }).call(this,require("timers").setImmediate,require("timers").clearImmediate)
-},{"process/browser.js":46,"timers":57}],58:[function(require,module,exports){
+},{"process/browser.js":44,"timers":53}],54:[function(require,module,exports){
 module.exports = toArray
 
 function toArray(list, index) {
@@ -14626,7 +14205,7 @@ function toArray(list, index) {
     return array
 }
 
-},{}],59:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 'use strict';
 
 var alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_'.split('')

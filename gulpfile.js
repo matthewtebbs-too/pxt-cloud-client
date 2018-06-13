@@ -16,6 +16,7 @@ var BUILT_TYPINGS = _BUILT.concat('/typings/');
 
 var DST = './dist/';
 var LIB = './lib/';
+var NODE_MODULES = './node_modules/';
 
 var gulp = require('gulp');
 var del = require('del');
@@ -73,7 +74,8 @@ gulp.task('bundle', function () {
 
     return merge([
         result,
-        gulp.src(BUILT_TYPINGS.concat('**')).pipe(gulp.dest(LIB)),
+        gulp.src([BUILT_TYPINGS.concat('**'), '!' + BUILT_TYPINGS.concat('api.d.ts')]).pipe(gulp.dest(LIB)),
+        gulp.src(NODE_MODULES.concat('pxt-cloud/lib/api.d.ts')).pipe(gulp.dest(LIB)),
         resultb,
     ]);
 });

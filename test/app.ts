@@ -13,18 +13,29 @@ import * as PxtCloudClient from '..';
 const debug = require('debug')('pxt-cloud:test');
 
 function testUsersAPI(api: PxtCloud.UsersAPI) {
+    if (!api.isConnected) {
+        return;
+    }
+
     api.addSelf({ name: 'Jilly Bean' }).then(value => debug(`user existed: %d`, value), debug);
     api.selfInfo().then(value => debug(`user: %o`, value), debug);
 }
 
 function testChatAPI(api: PxtCloud.ChatAPI) {
-    api.newMessage('Hello world!').then(debug(`message queued`), debug);
+    if (!api.isConnected) {
+        return;
+    }
 
+    api.newMessage('Hello world!').then(debug(`message queued`), debug);
     api.on('new message', msg => debug(`${msg.name} says '${msg.text}'`));
 }
 
 function testWorldAPI(api: PxtCloud.WorldAPI) {
-    /* no tests */
+    if (!api.isConnected) {
+        return;
+    }
+
+    /* no API to test */
 }
 
 function test(api: PxtCloud.PublicAPI) {

@@ -42,6 +42,7 @@ exports.ChatClient = ChatClient;
 (function (process){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var debug = require('debug')('pxt-cloud:client');
 var hostname, port;
 var enabled;
 if (typeof location !== 'undefined' && location.search) {
@@ -53,7 +54,7 @@ if (typeof location !== 'undefined' && location.search) {
 else if (typeof process !== 'undefined' && process.env) {
     hostname = process.env.PXT_CLOUD_HOSTNAME;
     port = process.env.PXT_CLOUD_PORT;
-    enabled = !!process.env.PXT_CLOUD_ENABLED;
+    enabled = !!process.env.PXT_CLOUD_ENABLED && null !== process.env.PXT_CLOUD_ENABLED.trim().match(/^(true|1|)$/);
 }
 var ClientConfig = (function () {
     function ClientConfig() {
@@ -67,13 +68,14 @@ var ClientConfig = (function () {
     });
     ClientConfig.hostname = hostname || 'localhost';
     ClientConfig.port = port ? parseInt(port, 10) : 3000;
-    ClientConfig.enabled = enabled || 'false';
+    ClientConfig.enabled = enabled || false;
     return ClientConfig;
 }());
 exports.ClientConfig = ClientConfig;
+debug("Configuration\n    hostname:   " + ClientConfig.hostname + "\n    port:       " + ClientConfig.port + "\n    enabled:    " + (ClientConfig.enabled ? 'true' : 'false') + "'");
 
 }).call(this,require('_process'))
-},{"_process":46,"query-string":47}],4:[function(require,module,exports){
+},{"_process":46,"debug":21,"query-string":47}],4:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -176,16 +178,16 @@ var Client = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Client.prototype, "connectedId", {
+    Object.defineProperty(Client.prototype, "socket", {
         get: function () {
-            return this.isConnected ? "" + this._socket.id : null;
+            return this._socket;
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Client.prototype, "socket", {
+    Object.defineProperty(Client.prototype, "connectedId", {
         get: function () {
-            return this._socket;
+            return this.isConnected ? "" + this._socket.id : null;
         },
         enumerable: true,
         configurable: true
@@ -194,6 +196,10 @@ var Client = (function (_super) {
         var _this = this;
         this.dispose();
         return new Promise(function (resolve, reject) {
+            if (!client_config_1.ClientConfig.enabled) {
+                resolve(_this);
+                return;
+            }
             var options = {
                 rejectUnauthorized: false,
                 transports: typeof document !== 'undefined' ? ['polling', 'websocket'] : ['websocket'],
@@ -242,7 +248,7 @@ var Client = (function (_super) {
         return new Promise(function (resolve, reject) {
             var _a;
             if (!_this.socket) {
-                reject(Client._errorInvalidConnection);
+                reject(Client._errorNotConnected);
                 return;
             }
             (_a = _this.socket).emit.apply(_a, [event].concat(args, [function (error, reply) {
@@ -276,7 +282,7 @@ var Client = (function (_super) {
     };
     Client.prototype._onDisconnect = function () {
     };
-    Client._errorInvalidConnection = new Error('Invalid client connection!');
+    Client._errorNotConnected = new Error('No client connection.');
     return Client;
 }(events_1.EventEmitter));
 exports.Client = Client;

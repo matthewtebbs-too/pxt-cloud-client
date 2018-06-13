@@ -12,7 +12,7 @@ import * as SocketIO from 'socket.io-client';
 import { ClientConfig } from './client.config';
 
 export abstract class Client extends EventEmitter implements API.EventAPI {
-    protected static _errorInvalidConnection = new Error('Invalid client connection!');
+    protected static _errorNotConnected = new Error('No client connection.');
 
     protected abstract _debug: any;
 
@@ -22,18 +22,23 @@ export abstract class Client extends EventEmitter implements API.EventAPI {
         return !!this._socket && this._socket.connected;
     }
 
-    public get connectedId(): string | null {
-        return this.isConnected ? `${this._socket!.id}` : null;
-    }
-
     protected get socket(): SocketIOClient.Socket | null {
         return this._socket;
     }
 
-    public connect(uri?: string, nsp?: string): Promise<API.EventAPI> {
+    protected get connectedId(): string | null {
+        return this.isConnected ? `${this._socket!.id}` : null;
+    }
+
+    public connect(uri?: string, nsp?: string): Promise<this> {
         this.dispose();
 
         return new Promise((resolve, reject) => {
+            if (!ClientConfig.enabled) {
+                resolve(this);
+                return;
+            }
+
             const options: SocketIOClient.ConnectOpts = {
                 rejectUnauthorized: false, /* TODO$: use CA issued server certificate */
                 transports: typeof document !== 'undefined' ? ['polling', 'websocket'] : ['websocket'],
@@ -85,7 +90,7 @@ export abstract class Client extends EventEmitter implements API.EventAPI {
     protected _promiseEvent<T>(event: string, ...args: any[]): Promise<T> {
         return new Promise((resolve, reject) => {
             if (!this.socket) {
-                reject(Client._errorInvalidConnection);
+                reject(Client._errorNotConnected);
                 return;
             }
 

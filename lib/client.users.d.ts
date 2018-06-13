@@ -4,7 +4,7 @@ import * as API from 'pxt-cloud';
 import { Client } from './client_';
 export declare class UsersClient extends Client implements API.UsersAPI {
     protected _debug: any;
-    connect(uri?: string): Promise<API.UsersAPI>;
+    connect(uri?: string): Promise<this>;
     selfInfo(): Promise<API.UserData>;
     addSelf(user: API.UserData): Promise<boolean>;
     removeSelf(): Promise<boolean>;

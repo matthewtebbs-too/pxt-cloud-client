@@ -4,6 +4,8 @@
     Copyright (c) 2018 MuddyTummy Software LLC
 */
 
+const debug = require('debug')('pxt-cloud:client');
+
 let hostname: string | undefined,
     port: string | undefined;
 
@@ -17,15 +19,21 @@ if (typeof location !== 'undefined' && location.search) {
 } else if (typeof process !== 'undefined' && process.env) {
     hostname = process.env.PXT_CLOUD_HOSTNAME;
     port = process.env.PXT_CLOUD_PORT;
-    enabled = !!process.env.PXT_CLOUD_ENABLED;
+    enabled = !!process.env.PXT_CLOUD_ENABLED && null !== process.env.PXT_CLOUD_ENABLED.trim().match(/^(true|1|)$/);
 }
 
 export class ClientConfig {
     public static hostname = hostname || 'localhost';
     public static port = port ? parseInt(port, 10) : 3000;
-    public static enabled = enabled || 'false';
+    public static enabled = enabled || false;
 
     public static get defaultUri(): string {
         return `https://${ClientConfig.hostname}:${ClientConfig.port}`;
     }
 }
+
+debug(
+`Configuration
+    hostname:   ${ClientConfig.hostname}
+    port:       ${ClientConfig.port}
+    enabled:    ${ClientConfig.enabled ? 'true' : 'false'}`);

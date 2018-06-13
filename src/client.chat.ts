@@ -14,8 +14,8 @@ const debug = require('debug')('pxt-cloud:client:chat');
 export class ChatClient extends Client implements API.ChatAPI {
     protected _debug: any = debug;
 
-    public connect(uri?: string): Promise<API.ChatAPI> {
-        return super.connect(uri, 'chat') as Promise<API.ChatAPI>;
+    public connect(uri?: string): Promise<this> {
+        return super.connect(uri, 'chat') as Promise<this>;
     }
 
     public newMessage(msg: string | API.MessageData): Promise<void> {

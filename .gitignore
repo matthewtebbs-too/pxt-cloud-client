@@ -1,4 +1,5 @@
 .env
+dump.rdb
 built
 built.*
 gh-pages

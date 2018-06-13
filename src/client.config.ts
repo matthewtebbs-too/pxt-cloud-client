@@ -24,9 +24,9 @@ if (typeof localStorage !== 'undefined') {
 }
 
 if (!!env) {
-    hostname = process.env.PXT_CLOUD_HOSTNAME;
-    port = process.env.PXT_CLOUD_PORT;
-    enabled = isTrue(process.env.PXT_CLOUD_ENABLED);
+    hostname = env.PXT_CLOUD_HOSTNAME;
+    port = env.PXT_CLOUD_PORT;
+    enabled = isTrue(env.PXT_CLOUD_ENABLED);
 }
 
 export class ClientConfig {

@@ -45,16 +45,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var debug = require('debug')('pxt-cloud:client');
 var hostname, port;
 var enabled;
+function isTrue(value) {
+    return !!value && null !== value.trim().match(/^(true|1|)$/);
+}
 if (typeof location !== 'undefined' && location.search) {
     var parsedQueryString = require('query-string').parse(location.search);
     hostname = parsedQueryString.hostname;
     port = parsedQueryString.port;
-    enabled = !!parsedQueryString.cloud;
+    enabled = isTrue(parsedQueryString.cloudenabled);
 }
 else if (typeof process !== 'undefined' && process.env) {
     hostname = process.env.PXT_CLOUD_HOSTNAME;
     port = process.env.PXT_CLOUD_PORT;
-    enabled = !!process.env.PXT_CLOUD_ENABLED && null !== process.env.PXT_CLOUD_ENABLED.trim().match(/^(true|1|)$/);
+    enabled = isTrue(process.env.PXT_CLOUD_ENABLED);
 }
 var ClientConfig = (function () {
     function ClientConfig() {
@@ -72,7 +75,7 @@ var ClientConfig = (function () {
     return ClientConfig;
 }());
 exports.ClientConfig = ClientConfig;
-debug("Configuration\n    hostname:   " + ClientConfig.hostname + "\n    port:       " + ClientConfig.port + "\n    enabled:    " + (ClientConfig.enabled ? 'true' : 'false') + "'");
+debug("Configuration\n    hostname:   " + ClientConfig.hostname + "\n    port:       " + ClientConfig.port + "\n    enabled:    " + (ClientConfig.enabled ? 'true' : 'false'));
 
 }).call(this,require('_process'))
 },{"_process":46,"debug":21,"query-string":47}],4:[function(require,module,exports){

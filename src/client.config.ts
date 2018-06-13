@@ -11,15 +11,19 @@ let hostname: string | undefined,
 
 let enabled: boolean | undefined;
 
+function isTrue(value: string | undefined): boolean {
+    return !!value && null !== value.trim().match(/^(true|1|)$/);
+}
+
 if (typeof location !== 'undefined' && location.search) {
     const parsedQueryString = require('query-string').parse(location.search);
     hostname = parsedQueryString.hostname;
     port = parsedQueryString.port;
-    enabled = !!parsedQueryString.cloud;
+    enabled = isTrue(parsedQueryString.cloudenabled);
 } else if (typeof process !== 'undefined' && process.env) {
     hostname = process.env.PXT_CLOUD_HOSTNAME;
     port = process.env.PXT_CLOUD_PORT;
-    enabled = !!process.env.PXT_CLOUD_ENABLED && null !== process.env.PXT_CLOUD_ENABLED.trim().match(/^(true|1|)$/);
+    enabled = isTrue(process.env.PXT_CLOUD_ENABLED);
 }
 
 export class ClientConfig {

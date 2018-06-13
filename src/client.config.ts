@@ -41,6 +41,6 @@ export class ClientConfig {
 
 debug(
 `Configuration
-    hostname:   ${ClientConfig.hostname}
-    port:       ${ClientConfig.port}
-    enabled:    ${ClientConfig.enabled ? 'true' : 'false'}`);
+    Host name [PXT_CLOUD_HOSTNAME]: ${ClientConfig.hostname}
+    Port [PXT_CLOUD_PORT]:          ${ClientConfig.port}
+    Enabled [PXT_CLOUD_ENABLED]:    ${ClientConfig.enabled ? 'true' : 'false'}`);

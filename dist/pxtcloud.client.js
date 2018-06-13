@@ -76,7 +76,7 @@ var ClientConfig = (function () {
     return ClientConfig;
 }());
 exports.ClientConfig = ClientConfig;
-debug("Configuration\n    hostname:   " + ClientConfig.hostname + "\n    port:       " + ClientConfig.port + "\n    enabled:    " + (ClientConfig.enabled ? 'true' : 'false'));
+debug("Configuration\n    Host name [PXT_CLOUD_HOSTNAME]: " + ClientConfig.hostname + "\n    Port [PXT_CLOUD_PORT]:          " + ClientConfig.port + "\n    Enabled [PXT_CLOUD_ENABLED]:    " + (ClientConfig.enabled ? 'true' : 'false'));
 
 }).call(this,require('_process'))
 },{"_process":44,"debug":21}],4:[function(require,module,exports){

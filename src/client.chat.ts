@@ -15,8 +15,6 @@ export class ChatClient extends Client implements API.ChatAPI {
     protected _debug: any = debug;
 
     public connect(uri?: string): Promise<API.ChatAPI> {
-        debug('chat client foor');
-
         return super.connect(uri, 'chat') as Promise<API.ChatAPI>;
     }
 

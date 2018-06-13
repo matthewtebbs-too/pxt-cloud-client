@@ -43,14 +43,17 @@ exports.ChatClient = ChatClient;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var hostname, port;
+var enabled;
 if (typeof location !== 'undefined' && location.search) {
     var parsedQueryString = require('query-string').parse(location.search);
     hostname = parsedQueryString.hostname;
     port = parsedQueryString.port;
+    enabled = !!parsedQueryString.cloud;
 }
 else if (typeof process !== 'undefined' && process.env) {
     hostname = process.env.PXT_CLOUD_HOSTNAME;
     port = process.env.PXT_CLOUD_PORT;
+    enabled = !!process.env.PXT_CLOUD_ENABLED;
 }
 var ClientConfig = (function () {
     function ClientConfig() {
@@ -64,6 +67,7 @@ var ClientConfig = (function () {
     });
     ClientConfig.hostname = hostname || 'localhost';
     ClientConfig.port = port ? parseInt(port, 10) : 3000;
+    ClientConfig.enabled = enabled || 'false';
     return ClientConfig;
 }());
 exports.ClientConfig = ClientConfig;

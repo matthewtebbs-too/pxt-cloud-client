@@ -34,8 +34,12 @@ export abstract class Client extends EventEmitter implements API.EventAPI {
         this.dispose();
 
         return new Promise((resolve, reject) => {
-            const transports_ = typeof document !== 'undefined' ? ['polling', 'websocket'] : ['websocket'];
-            const socket = SocketIO(`${uri || ClientConfig.defaultUri || ''}/pxt-cloud${nsp ? `/${nsp}` : ''}`, { transports: transports_ });
+            const options: SocketIOClient.ConnectOpts = {
+                rejectUnauthorized: false, /* TODO$: use CA issued server certificate */
+                transports: typeof document !== 'undefined' ? ['polling', 'websocket'] : ['websocket'],
+            };
+
+            const socket = SocketIO(`${uri || ClientConfig.defaultUri || ''}/pxt-cloud${nsp ? `/${nsp}` : ''}`, options);
 
             this._socket = socket;
 

@@ -21,6 +21,6 @@ export class ClientConfig {
     public static port = port ? parseInt(port, 10) : 3000;
 
     public static get defaultUri(): string {
-        return `http://${ClientConfig.hostname}:${ClientConfig.port}`;
+        return `https://${ClientConfig.hostname}:${ClientConfig.port}`;
     }
 }

@@ -53,7 +53,7 @@ var ClientConfig = (function () {
     }
     Object.defineProperty(ClientConfig, "defaultUri", {
         get: function () {
-            return "http://" + ClientConfig.hostname + ":" + ClientConfig.port;
+            return "https://" + ClientConfig.hostname + ":" + ClientConfig.port;
         },
         enumerable: true,
         configurable: true
@@ -186,8 +186,11 @@ var Client = (function (_super) {
         var _this = this;
         this.dispose();
         return new Promise(function (resolve, reject) {
-            var transports_ = typeof document !== 'undefined' ? ['polling', 'websocket'] : ['websocket'];
-            var socket = SocketIO((uri || client_config_1.ClientConfig.defaultUri || '') + "/pxt-cloud" + (nsp ? "/" + nsp : ''), { transports: transports_ });
+            var options = {
+                rejectUnauthorized: false,
+                transports: typeof document !== 'undefined' ? ['polling', 'websocket'] : ['websocket'],
+            };
+            var socket = SocketIO((uri || client_config_1.ClientConfig.defaultUri || '') + "/pxt-cloud" + (nsp ? "/" + nsp : ''), options);
             _this._socket = socket;
             socket.on('connect', function () {
                 _this._debug("client connected");

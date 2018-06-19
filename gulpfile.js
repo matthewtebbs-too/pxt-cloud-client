@@ -45,8 +45,10 @@ gulp.task('build', function () {
 
 var glob = require('glob');
 var browserify = require('browserify');
-var uglify = require('gulp-uglify');
+var uglifyjs = require('uglify-js');
 var rename = require('gulp-rename');
+var composer = require('gulp-uglify/composer');
+var minify = composer(uglifyjs, console);
 
 var rollup = require('rollup-stream');
 
@@ -59,16 +61,13 @@ gulp.task('bundle', function () {
         {
             entries: glob.sync(BUILT.concat('**/*.js')),
             standalone: 'PxtCloudClient',
-            options: {
-                transform: ['debowerify', 'decomponentify', 'deamdify', 'deglobalify'],
-            },
         }).bundle();
 
     var resultb = bundle
         .pipe(source('pxtcloud.client.js'))
         .pipe(buffer())
         .pipe(gulp.dest(DST))
-        .pipe(uglify())
+        .pipe(minify())
         .pipe(rename({ extname: '.min.js' }))
         .pipe(gulp.dest(DST));
 

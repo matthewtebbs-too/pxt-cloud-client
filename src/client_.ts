@@ -11,8 +11,10 @@ import * as SocketIO from 'socket.io-client';
 
 import { ClientConfig } from './client.config';
 
-export abstract class Client extends EventEmitter implements API.EventAPI {
+export abstract class Client extends EventEmitter implements API.CommonAPI {
     protected static _errorNotConnected = new Error('No client connection.');
+
+    public readonly off = super.removeListener;
 
     protected abstract _debug: any;
 
@@ -30,7 +32,7 @@ export abstract class Client extends EventEmitter implements API.EventAPI {
         return this.isConnected ? `${this._socket!.id}` : null;
     }
 
-    public connect(uri?: string, nsp?: string): Promise<this> {
+    public connect(uri?: string, nsp?: string): PromiseLike<this> {
         this.dispose();
 
         return new Promise((resolve, reject) => {
@@ -87,7 +89,7 @@ export abstract class Client extends EventEmitter implements API.EventAPI {
         });
     }
 
-    protected _promiseEvent<T>(event: string, ...args: any[]): Promise<T> {
+    protected _promiseEvent<T>(event: string, ...args: any[]): PromiseLike<T> {
         return new Promise((resolve, reject) => {
             if (!this.socket) {
                 reject(Client._errorNotConnected);

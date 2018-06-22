@@ -18,7 +18,7 @@ export * from './client.world';
 
 const debug = require('debug')('pxt-cloud:clients');
 
-export function makeAPIConnection(uri?: string): Promise<API.PublicAPI> {
+export function makeAPIConnection(uri?: string): PromiseLike<API.PublicAPI> {
     const clients: Clients = {
         chat: new ChatClient(),
         users: new UsersClient(),

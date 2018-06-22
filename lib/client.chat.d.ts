@@ -5,6 +5,6 @@ import { Client } from './client_';
 export declare class ChatClient extends Client implements API.ChatAPI {
     protected _debug: any;
     connect(uri?: string): Promise<this>;
-    newMessage(msg: string | API.MessageData): Promise<void>;
+    newMessage(msg: string | API.MessageData): PromiseLike<void>;
     protected _onConnect(socket: SocketIOClient.Socket): void;
 }

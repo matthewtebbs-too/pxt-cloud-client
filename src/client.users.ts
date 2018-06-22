@@ -14,19 +14,19 @@ const debug = require('debug')('pxt-cloud:client:users');
 export class UsersClient extends Client implements API.UsersAPI {
     protected _debug: any = debug;
 
-    public connect(uri?: string): Promise<this> {
+    public connect(uri?: string): PromiseLike<this> {
         return super.connect(uri, 'users') as Promise<this>;
     }
 
-    public selfInfo(): Promise<API.UserData> {
+    public selfInfo(): PromiseLike<API.UserData> {
         return this._promiseEvent('self info');
     }
 
-    public addSelf(user: API.UserData): Promise<boolean> {
+    public addSelf(user: API.UserData): PromiseLike<boolean> {
         return this._promiseEvent('add self', user);
     }
 
-    public removeSelf(): Promise<boolean> {
+    public removeSelf(): PromiseLike<boolean> {
         return this._promiseEvent('remove self');
     }
 

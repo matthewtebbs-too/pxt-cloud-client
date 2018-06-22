@@ -18,7 +18,7 @@ export class ChatClient extends Client implements API.ChatAPI {
         return super.connect(uri, 'chat') as Promise<this>;
     }
 
-    public newMessage(msg: string | API.MessageData): Promise<void> {
+    public newMessage(msg: string | API.MessageData): PromiseLike<void> {
         return this._promiseEvent('new message', msg);
     }
 

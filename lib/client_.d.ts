@@ -13,7 +13,7 @@ export declare abstract class Client extends EventEmitter implements API.CommonA
     connect(uri?: string, nsp?: string): PromiseLike<this>;
     dispose(): void;
     protected _onConnect(socket: SocketIOClient.Socket): void;
-    protected _promiseEvent<T>(event: string, ...args: any[]): PromiseLike<T>;
+    protected _promiseEvent<T, R>(event: string, arg?: T): PromiseLike<R>;
     protected _notifyEvent(event: string, ...args: any[]): boolean;
     protected _notifyReceivedEvent(event: string, socket: SocketIOClient.Socket): void;
     protected _onDisconnect(): void;

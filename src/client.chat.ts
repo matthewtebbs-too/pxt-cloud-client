@@ -19,7 +19,7 @@ export class ChatClient extends Client implements API.ChatAPI {
     }
 
     public newMessage(msg: string | API.MessageData): PromiseLike<void> {
-        return this._promiseEvent('new message', typeof msg !== 'object' ? { text: msg } : msg);
+        return this._promiseEvent('new message', msg);
     }
 
     protected _onConnect(socket: SocketIOClient.Socket) {

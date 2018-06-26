@@ -89,16 +89,16 @@ export abstract class Client extends EventEmitter implements API.CommonAPI {
         });
     }
 
-    protected _promiseEvent<T, R>(event: string, arg?: T): PromiseLike<R> {
+    protected _promiseEvent<T>(event: string, ...args: any[]): PromiseLike<T> {
         return new Promise((resolve, reject) => {
             if (!this.socket) {
                 reject(Client._errorNotConnected);
                 return;
             }
 
-            this.socket.emit(event, arg,
+            this.socket.emit(event, ...args,
 
-                (error: Error | null, reply?: R) => {
+                (error: Error | null, reply?: T) => {
                     if (error) {
                         reject(error);
                     } else {

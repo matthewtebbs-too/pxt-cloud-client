@@ -28,7 +28,7 @@ var ChatClient = (function (_super) {
         return _super.prototype.connect.call(this, uri, 'chat');
     };
     ChatClient.prototype.newMessage = function (msg) {
-        return this._promiseEvent('new message', typeof msg !== 'object' ? { text: msg } : msg);
+        return this._promiseEvent('new message', msg);
     };
     ChatClient.prototype._onConnect = function (socket) {
         _super.prototype._onConnect.call(this, socket);
@@ -244,21 +244,26 @@ var Client = (function (_super) {
             _this._onDisconnect();
         });
     };
-    Client.prototype._promiseEvent = function (event, arg) {
+    Client.prototype._promiseEvent = function (event) {
         var _this = this;
+        var args = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            args[_i - 1] = arguments[_i];
+        }
         return new Promise(function (resolve, reject) {
+            var _a;
             if (!_this.socket) {
                 reject(Client._errorNotConnected);
                 return;
             }
-            _this.socket.emit(event, arg, function (error, reply) {
-                if (error) {
-                    reject(error);
-                }
-                else {
-                    resolve(reply);
-                }
-            });
+            (_a = _this.socket).emit.apply(_a, [event].concat(args, [function (error, reply) {
+                    if (error) {
+                        reject(error);
+                    }
+                    else {
+                        resolve(reply);
+                    }
+                }]));
         });
     };
     Client.prototype._notifyEvent = function (event) {

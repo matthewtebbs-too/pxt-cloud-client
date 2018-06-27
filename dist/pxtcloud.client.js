@@ -28,7 +28,7 @@ var ChatClient = (function (_super) {
         return _super.prototype.connect.call(this, uri, 'chat');
     };
     ChatClient.prototype.newMessage = function (msg) {
-        return this._promiseEvent('new message', msg);
+        return this._promiseEvent('new message', typeof msg !== 'object' ? { text: msg } : msg);
     };
     ChatClient.prototype._onConnect = function (socket) {
         _super.prototype._onConnect.call(this, socket);

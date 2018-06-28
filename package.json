@@ -5,7 +5,7 @@
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "browser": "./dist/pxtcloud.client.js",
-  "unpkg": "./dist/pxtcloud.client.min.js",
+  "unpkg": "./dist/pxtcloud.client.js",
   "files": [
     "dist/**/*",
     "lib/**/*"

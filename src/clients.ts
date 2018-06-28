@@ -4,6 +4,8 @@
     Copyright (c) 2018 MuddyTummy Software LLC
 */
 
+import * as SocketIO from 'socket.io-client';
+
 import * as API from 'pxt-cloud';
 
 import { ChatClient } from './client.chat';
@@ -50,4 +52,6 @@ export function disposeAPIConnection(api: API.PublicAPI) {
     if (undefined !== dispose && typeof dispose === 'function') {
         dispose();
     }
+
+    Object.keys(SocketIO.managers).forEach(id => delete SocketIO.managers[id]);
 }

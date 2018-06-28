@@ -64,11 +64,11 @@ gulp.task('bundle', function () {
         }).bundle();
 
     var resultb = bundle
-        .pipe(source('pxtcloud.client.js'))
+        .pipe(source('pxtcloud.client.dev.js'))
         .pipe(buffer())
         .pipe(gulp.dest(DST))
         .pipe(minify())
-        .pipe(rename({ extname: '.min.js' }))
+        .pipe(rename('pxtcloud.client.js'))
         .pipe(gulp.dest(DST));
 
     return merge([

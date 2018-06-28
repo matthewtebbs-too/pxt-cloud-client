@@ -8,6 +8,7 @@ import * as Promise from 'bluebird';
 import { EventEmitter } from 'events';
 import * as API from 'pxt-cloud';
 import * as SocketIO from 'socket.io-client';
+const url = require('socket.io-client/lib/url');
 
 import { ClientConfig } from './client.config';
 
@@ -77,7 +78,13 @@ export abstract class Client extends EventEmitter implements API.CommonAPI {
 
     public dispose() {
         if (this._socket) {
+            const parsed = url(this._socket.io.uri);
+            const nsp = this._socket.nsp;
+
             this._socket.close();
+
+            delete SocketIO.managers[parsed.id].nsps[nsp];
+
             this._socket = null;
         }
     }

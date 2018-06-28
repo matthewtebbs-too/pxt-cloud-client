@@ -167,6 +167,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Promise = require("bluebird");
 var events_1 = require("events");
 var SocketIO = require("socket.io-client");
+var url = require('socket.io-client/lib/url');
 var client_config_1 = require("./client.config");
 var Client = (function (_super) {
     __extends(Client, _super);
@@ -233,7 +234,10 @@ var Client = (function (_super) {
     };
     Client.prototype.dispose = function () {
         if (this._socket) {
+            var parsed = url(this._socket.io.uri);
+            var nsp = this._socket.nsp;
             this._socket.close();
+            delete SocketIO.managers[parsed.id].nsps[nsp];
             this._socket = null;
         }
     };
@@ -292,13 +296,12 @@ var Client = (function (_super) {
 }(events_1.EventEmitter));
 exports.Client = Client;
 
-},{"./client.config":3,"bluebird":15,"events":35,"socket.io-client":45}],7:[function(require,module,exports){
+},{"./client.config":3,"bluebird":15,"events":35,"socket.io-client":45,"socket.io-client/lib/url":49}],7:[function(require,module,exports){
 "use strict";
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var SocketIO = require("socket.io-client");
 var client_chat_1 = require("./client.chat");
 var client_users_1 = require("./client.users");
 var client_world_1 = require("./client.world");
@@ -334,11 +337,10 @@ function disposeAPIConnection(api) {
     if (undefined !== dispose && typeof dispose === 'function') {
         dispose();
     }
-    Object.keys(SocketIO.managers).forEach(function (id) { return delete SocketIO.managers[id]; });
 }
 exports.disposeAPIConnection = disposeAPIConnection;
 
-},{"./client.chat":2,"./client.users":4,"./client.world":5,"./client_":6,"debug":21,"socket.io-client":45}],8:[function(require,module,exports){
+},{"./client.chat":2,"./client.users":4,"./client.world":5,"./client_":6,"debug":21}],8:[function(require,module,exports){
 "use strict";
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];

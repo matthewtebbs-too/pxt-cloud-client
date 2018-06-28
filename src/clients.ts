@@ -52,6 +52,4 @@ export function disposeAPIConnection(api: API.PublicAPI) {
     if (undefined !== dispose && typeof dispose === 'function') {
         dispose();
     }
-
-    Object.keys(SocketIO.managers).forEach(id => delete SocketIO.managers[id]);
 }

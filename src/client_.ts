@@ -57,6 +57,11 @@ export abstract class Client extends EventEmitter implements API.CommonAPI {
                 resolve(this);
             });
 
+            socket.on('disconnect', () => {
+                this._debug(`client disconnected`);
+                this._onDisconnect(socket);
+            });
+
             socket.on('connect_error', (error: Error) => {
                 this._debug(`client connect failed [${typeof error === 'string' ? error : error.message}]`);
             });
@@ -82,18 +87,18 @@ export abstract class Client extends EventEmitter implements API.CommonAPI {
             const nsp = this._socket.nsp;
 
             this._socket.close();
+            this._socket = null;
 
             delete SocketIO.managers[parsed.id].nsps[nsp];
-
-            this._socket = null;
         }
     }
 
     protected _onConnect(socket: SocketIOClient.Socket) {
-        socket.on('disconnect', () => {
-            this._debug(`client disconnected`);
-            this._onDisconnect();
-        });
+        /* do nothing */
+    }
+
+    protected _onDisconnect(socket: SocketIOClient.Socket) {
+        /* do nothing */
     }
 
     protected _promiseEvent<T>(event: string, ...args: any[]): PromiseLike<T> {
@@ -119,14 +124,12 @@ export abstract class Client extends EventEmitter implements API.CommonAPI {
         return this.emit(event, ...args);
     }
 
-    protected _notifyReceivedEvent(event: string, socket: SocketIOClient.Socket) {
-        if (socket) {
-            socket.on(event, (...args: any[]) => this._notifyEvent(event, ...args));
-        }
+    protected _onNotifyReceivedEvent(event: string, socket: SocketIOClient.Socket) {
+        socket.on(event, (...args: any[]) => this._notifyEvent(event, ...args));
     }
 
-    protected _onDisconnect() {
-        /* do nothing */
+    protected _offNotifyReceivedEvent(event: string, socket: SocketIOClient.Socket) {
+        socket.off(event);
     }
 }
 

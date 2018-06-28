@@ -17,6 +17,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var client_1 = require("./client_");
 var debug = require('debug')('pxt-cloud:client:chat');
+var eventNewMessage = 'new message';
 var ChatClient = (function (_super) {
     __extends(ChatClient, _super);
     function ChatClient() {
@@ -28,11 +29,14 @@ var ChatClient = (function (_super) {
         return _super.prototype.connect.call(this, uri, 'chat');
     };
     ChatClient.prototype.newMessage = function (msg) {
-        return this._promiseEvent('new message', typeof msg !== 'object' ? { text: msg } : msg);
+        return this._promiseEvent(eventNewMessage, typeof msg !== 'object' ? { text: msg } : msg);
     };
     ChatClient.prototype._onConnect = function (socket) {
         _super.prototype._onConnect.call(this, socket);
-        this._notifyReceivedEvent('new message', socket);
+        this._onNotifyReceivedEvent(eventNewMessage, socket);
+    };
+    ChatClient.prototype._onDisconnect = function (socket) {
+        this._offNotifyReceivedEvent(eventNewMessage, socket);
     };
     return ChatClient;
 }(client_1.Client));
@@ -94,6 +98,11 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var client_1 = require("./client_");
 var debug = require('debug')('pxt-cloud:client:users');
+var eventSelfInfo = 'self info';
+var eventAddSelf = 'add self';
+var eventRemoveSelf = 'remove self';
+var eventUserJoined = 'user joined';
+var eventUserLeft = 'user left';
 var UsersClient = (function (_super) {
     __extends(UsersClient, _super);
     function UsersClient() {
@@ -105,18 +114,22 @@ var UsersClient = (function (_super) {
         return _super.prototype.connect.call(this, uri, 'users');
     };
     UsersClient.prototype.selfInfo = function () {
-        return this._promiseEvent('self info');
+        return this._promiseEvent(eventSelfInfo);
     };
     UsersClient.prototype.addSelf = function (user) {
-        return this._promiseEvent('add self', user);
+        return this._promiseEvent(eventAddSelf, user);
     };
     UsersClient.prototype.removeSelf = function () {
-        return this._promiseEvent('remove self');
+        return this._promiseEvent(eventRemoveSelf);
     };
     UsersClient.prototype._onConnect = function (socket) {
         _super.prototype._onConnect.call(this, socket);
-        this._notifyReceivedEvent('user joined', socket);
-        this._notifyReceivedEvent('user left', socket);
+        this._onNotifyReceivedEvent(eventUserJoined, socket);
+        this._onNotifyReceivedEvent(eventUserLeft, socket);
+    };
+    UsersClient.prototype._onDisconnect = function (socket) {
+        this._offNotifyReceivedEvent(eventUserLeft, socket);
+        this._offNotifyReceivedEvent(eventUserJoined, socket);
     };
     return UsersClient;
 }(client_1.Client));
@@ -217,6 +230,10 @@ var Client = (function (_super) {
                 _this._onConnect(socket);
                 resolve(_this);
             });
+            socket.on('disconnect', function () {
+                _this._debug("client disconnected");
+                _this._onDisconnect(socket);
+            });
             socket.on('connect_error', function (error) {
                 _this._debug("client connect failed [" + (typeof error === 'string' ? error : error.message) + "]");
             });
@@ -237,16 +254,13 @@ var Client = (function (_super) {
             var parsed = url(this._socket.io.uri);
             var nsp = this._socket.nsp;
             this._socket.close();
-            delete SocketIO.managers[parsed.id].nsps[nsp];
             this._socket = null;
+            delete SocketIO.managers[parsed.id].nsps[nsp];
         }
     };
     Client.prototype._onConnect = function (socket) {
-        var _this = this;
-        socket.on('disconnect', function () {
-            _this._debug("client disconnected");
-            _this._onDisconnect();
-        });
+    };
+    Client.prototype._onDisconnect = function (socket) {
     };
     Client.prototype._promiseEvent = function (event) {
         var _this = this;
@@ -277,19 +291,18 @@ var Client = (function (_super) {
         }
         return this.emit.apply(this, [event].concat(args));
     };
-    Client.prototype._notifyReceivedEvent = function (event, socket) {
+    Client.prototype._onNotifyReceivedEvent = function (event, socket) {
         var _this = this;
-        if (socket) {
-            socket.on(event, function () {
-                var args = [];
-                for (var _i = 0; _i < arguments.length; _i++) {
-                    args[_i] = arguments[_i];
-                }
-                return _this._notifyEvent.apply(_this, [event].concat(args));
-            });
-        }
+        socket.on(event, function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            return _this._notifyEvent.apply(_this, [event].concat(args));
+        });
     };
-    Client.prototype._onDisconnect = function () {
+    Client.prototype._offNotifyReceivedEvent = function (event, socket) {
+        socket.off(event);
     };
     Client._errorNotConnected = new Error('No client connection.');
     return Client;

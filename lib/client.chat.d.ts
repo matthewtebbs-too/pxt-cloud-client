@@ -7,4 +7,5 @@ export declare class ChatClient extends Client implements API.ChatAPI {
     connect(uri?: string): Promise<this>;
     newMessage(msg: string | API.MessageData): PromiseLike<void>;
     protected _onConnect(socket: SocketIOClient.Socket): void;
+    protected _onDisconnect(socket: SocketIOClient.Socket): void;
 }

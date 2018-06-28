@@ -11,6 +11,8 @@ import { Client } from './client_';
 
 const debug = require('debug')('pxt-cloud:client:chat');
 
+const eventNewMessage = 'new message';
+
 export class ChatClient extends Client implements API.ChatAPI {
     protected _debug: any = debug;
 
@@ -19,12 +21,16 @@ export class ChatClient extends Client implements API.ChatAPI {
     }
 
     public newMessage(msg: string | API.MessageData): PromiseLike<void> {
-        return this._promiseEvent('new message', typeof msg !== 'object' ? { text: msg } : msg);
+        return this._promiseEvent(eventNewMessage, typeof msg !== 'object' ? { text: msg } : msg);
     }
 
     protected _onConnect(socket: SocketIOClient.Socket) {
         super._onConnect(socket);
 
-        this._notifyReceivedEvent('new message', socket);
+        this._onNotifyReceivedEvent(eventNewMessage, socket);
+    }
+
+    protected _onDisconnect(socket: SocketIOClient.Socket) {
+        this._offNotifyReceivedEvent(eventNewMessage, socket);
     }
 }

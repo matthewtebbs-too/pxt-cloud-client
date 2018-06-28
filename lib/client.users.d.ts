@@ -8,4 +8,5 @@ export declare class UsersClient extends Client implements API.UsersAPI {
     addSelf(user: API.UserData): PromiseLike<boolean>;
     removeSelf(): PromiseLike<boolean>;
     protected _onConnect(socket: SocketIOClient.Socket): void;
+    protected _onDisconnect(socket: SocketIOClient.Socket): void;
 }

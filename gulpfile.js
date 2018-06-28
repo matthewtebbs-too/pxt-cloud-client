@@ -16,7 +16,6 @@ var BUILT_TYPINGS = _BUILT.concat('/typings/');
 
 var DST = './dist/';
 var LIB = './lib/';
-var NODE_MODULES = './node_modules/';
 
 var gulp = require('gulp');
 var del = require('del');
@@ -26,7 +25,7 @@ var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 
 var ts = require('gulp-typescript');
-var tsProject = ts.createProject('tsconfig.json');
+var tsProject = ts.createProject(SRC.concat('tsconfig.json'));
 
 gulp.task('clean', function (done) {
     del([BUILT, BUILT_TEST, DST, LIB]).then(paths => done());
@@ -73,8 +72,7 @@ gulp.task('bundle', function () {
 
     return merge([
         result,
-        gulp.src([BUILT_TYPINGS.concat('**'), '!' + BUILT_TYPINGS.concat('api.d.ts')]).pipe(gulp.dest(LIB)),
-        gulp.src(NODE_MODULES.concat('pxt-cloud/lib/api.d.ts')).pipe(gulp.dest(LIB)),
+        gulp.src(BUILT_TYPINGS.concat('**')).pipe(gulp.dest(LIB)),
         resultb,
     ]);
 });

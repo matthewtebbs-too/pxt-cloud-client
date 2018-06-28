@@ -1,3 +1,3 @@
-# Cloud support for MakeCode
+# Client support for MakeCode cloud
 
-This repo contains client cloud support for [Microsoft MakeCode (PXT)](https://github.com/Microsoft/pxt).
+This repo contains client support for [Microsoft MakeCode (PXT)](https://github.com/Microsoft/pxt) cloud.

@@ -18,7 +18,6 @@ export default {
     input: './built/index.js',
     output: {
         format: 'cjs',
-        name: 'pxtcloud',
         sourcemap: false,
     },
     plugins: [

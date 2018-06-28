@@ -6,13 +6,13 @@
 
 require('dotenv').config();
 
-import * as PxtCloud from 'pxt-cloud';
+import * as API from 'pxt-cloud-api';
 
 import * as PxtCloudClient from '..';
 
 const debug = require('debug')('pxt-cloud:test');
 
-function testUsersAPI(api: PxtCloud.UsersAPI) {
+function testUsersAPI(api: API.UsersAPI) {
     if (!api.isConnected) {
         return;
     }
@@ -21,7 +21,7 @@ function testUsersAPI(api: PxtCloud.UsersAPI) {
     api.selfInfo().then(value => debug(`user: %o`, value), debug);
 }
 
-function testChatAPI(api: PxtCloud.ChatAPI) {
+function testChatAPI(api: API.ChatAPI) {
     if (!api.isConnected) {
         return;
     }
@@ -30,7 +30,7 @@ function testChatAPI(api: PxtCloud.ChatAPI) {
     api.on('new message', msg => debug(`${msg.name} says '${msg.text}'`));
 }
 
-function testWorldAPI(api: PxtCloud.WorldAPI) {
+function testWorldAPI(api: API.WorldAPI) {
     if (!api.isConnected) {
         return;
     }
@@ -38,7 +38,7 @@ function testWorldAPI(api: PxtCloud.WorldAPI) {
     /* no API to test */
 }
 
-function test(api: PxtCloud.PublicAPI) {
+function test(api: API.PublicAPI) {
     testUsersAPI(api.users);
     testChatAPI(api.chat);
     testWorldAPI(api.world);

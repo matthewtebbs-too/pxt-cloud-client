@@ -1,7 +1,7 @@
 /// <reference types="socket.io-client" />
 /// <reference types="node" />
 import { EventEmitter } from 'events';
-import * as API from 'pxt-cloud';
+import * as API from 'pxt-cloud-api';
 export declare abstract class Client extends EventEmitter implements API.CommonAPI {
     protected static _errorNotConnected: Error;
     readonly off: (event: string | symbol, listener: (...args: any[]) => void) => this;

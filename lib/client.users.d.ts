@@ -1,5 +1,5 @@
 /// <reference types="socket.io-client" />
-import * as API from 'pxt-cloud';
+import * as API from 'pxt-cloud-api';
 import { Client } from './client_';
 export declare class UsersClient extends Client implements API.UsersAPI {
     protected _debug: any;

@@ -1,6 +1,6 @@
 /// <reference types="socket.io-client" />
 import * as Promise from 'bluebird';
-import * as API from 'pxt-cloud';
+import * as API from 'pxt-cloud-api';
 import { Client } from './client_';
 export declare class ChatClient extends Client implements API.ChatAPI {
     protected _debug: any;

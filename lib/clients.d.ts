@@ -1,4 +1,4 @@
-import * as API from 'pxt-cloud';
+import * as API from 'pxt-cloud-api';
 export * from './client_';
 export * from './client.chat';
 export * from './client.users';

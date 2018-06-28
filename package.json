@@ -29,8 +29,7 @@
     "debug": "^3.1.0",
     "dotenv": "^5.0.1",
     "install": "^0.11.2",
-    "npm": "^6.1.0",
-    "pxt-cloud": "github:muddytummy/pxt-cloud",
+    "pxt-cloud-api": "github:muddytummy/pxt-cloud-api",
     "socket.io-client": "^2.1.1",
     "supports-color": "^5.4.0"
   },

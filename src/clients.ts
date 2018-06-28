@@ -4,9 +4,7 @@
     Copyright (c) 2018 MuddyTummy Software LLC
 */
 
-import * as SocketIO from 'socket.io-client';
-
-import * as API from 'pxt-cloud';
+import * as API from 'pxt-cloud-api';
 
 import { ChatClient } from './client.chat';
 import { UsersClient } from './client.users';

@@ -56,8 +56,7 @@ gulp.task('bundle', function () {
         .pipe(source('index.js'))
         .pipe(gulp.dest(LIB));
 
-    var bundle = browserify(
-        {
+    var bundle = browserify({
             entries: glob.sync(BUILT.concat('**/*.js')),
             standalone: 'PxtCloudClient',
         }).bundle();

@@ -165,6 +165,7 @@ var WorldClient = (function (_super) {
         return this.syncDiff(name, this._datarepo.syncData(name));
     };
     WorldClient.prototype.syncDiff = function (name, diff) {
+        debug(diff);
         return Promise.resolve([]);
     };
     return WorldClient;

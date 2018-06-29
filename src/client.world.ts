@@ -34,6 +34,7 @@ export class WorldClient extends Client implements API.WorldAPI {
     }
 
     public syncDiff(name: string, diff: any | any[] /* deep-diff's IDiff */): PromiseLike<string[]> {
+        debug(diff);
         return Promise.resolve([]);
     }
 }

@@ -6,6 +6,6 @@ export declare class WorldClient extends Client implements API.WorldAPI {
     connect(uri?: string): PromiseLike<this>;
     addDataSource(name: string, source_: API.DataSource): boolean;
     removeDataSource(name: string): boolean;
-    syncData(name: string): PromiseLike<string[]>;
-    syncDiff(name: string, diff: any | any[]): PromiseLike<string[]>;
+    syncDataSource(name: string): PromiseLike<string[]>;
+    syncDataDiff(name: string, diff: any): PromiseLike<string[]>;
 }

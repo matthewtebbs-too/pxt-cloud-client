@@ -29,11 +29,15 @@ export class WorldClient extends Client implements API.WorldAPI {
         return this._datarepo.removeDataSource(name);
     }
 
-    public syncData(name: string): PromiseLike<string[]> {
-        return this.syncDiff(name, this._datarepo.syncData(name));
+    public syncDataSource(name: string): PromiseLike<string[]> {
+        return this.syncDataDiff(name, this._datarepo.syncDataSource(name));
     }
 
-    public syncDiff(name: string, diff: any | any[] /* deep-diff's IDiff */): PromiseLike<string[]> {
-        return this._promiseEvent(API.Events.WorldSyncDiff, { name, diff });
+    public syncDataDiff(name: string, diff: any /* deep-diff's IDiff */): PromiseLike<string[]> {
+        if (!diff || (Array.isArray(diff) && 0 === diff.length)) {
+            return Promise.resolve([]);
+        }
+
+        return this._promiseEvent(API.Events.WorldSyncDataDiff, { name, diff });
     }
 }

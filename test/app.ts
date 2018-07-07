@@ -27,7 +27,7 @@ function testChatAPI(api: API.ChatAPI) {
     }
 
     api.newMessage('Hello world!').then(debug(`message queued`), debug);
-    api.on('new message', msg => debug(`${msg.name} says '${msg.text}'`));
+    api.on(API.Events.ChatNewMessage, msg => debug(`${msg.name} says '${msg.text}'`));
 }
 
 function testWorldAPI(api: API.WorldAPI) {
@@ -35,7 +35,9 @@ function testWorldAPI(api: API.WorldAPI) {
         return;
     }
 
-    /* no API to test */
+    api.on(API.Events.WorldSyncDataDiff, (name, diff) => {
+        debug(api.currentlySynced('globals'));
+    });
 }
 
 function test(api: API.PublicAPI) {

@@ -30,12 +30,12 @@ export class WorldClient extends Client implements API.WorldAPI {
     }
 
     public syncDataSource(name: string): PromiseLike<string[]> {
-        const diff_ = this._datarepo.syncDataSource(name);
+        const diff = this._datarepo.syncDataSource(name);
 
-        return diff_ ? this.syncDataDiff(name, diff_) : Promise.resolve([]);
+        return diff ? this.syncDataDiff(name, diff) : Promise.resolve([]);
     }
 
-    public syncDataDiff(name: string, diff_: API.DataDiff[]): PromiseLike<string[]> {
-        return diff_.length > 0 ? this._promiseEvent(API.Events.WorldSyncDataDiff, { name, diff_ }) : Promise.resolve([]);
+    public syncDataDiff(name: string, diff: API.DataDiff[]): PromiseLike<string[]> {
+        return diff.length > 0 ? this._promiseEvent(API.Events.WorldSyncDataDiff, { name, diff }) : Promise.resolve([]);
     }
 }

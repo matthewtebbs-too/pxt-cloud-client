@@ -21,8 +21,8 @@ export class WorldClient extends Client implements API.WorldAPI {
         return super.connect(uri, 'world') as Promise<this>;
     }
 
-    public addDataSource(name: string, source_: API.DataSource): boolean {
-        return this._datarepo.addDataSource(name, source_);
+    public addDataSource(name: string, source: API.DataSource): boolean {
+        return this._datarepo.addDataSource(name, source);
     }
 
     public removeDataSource(name: string): boolean {

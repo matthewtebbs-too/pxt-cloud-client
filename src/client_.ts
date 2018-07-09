@@ -109,20 +109,23 @@ export abstract class Client extends EventEmitter implements API.CommonAPI {
                 return;
             }
 
-            this.socket.emit(event, ...args,
+            this.socket.emit(
+                event,
+
+                ...args,
 
                 (error: Error | null, reply?: T) => {
-                    if (error) {
-                        reject(error);
-                    } else {
+                    if (!error) {
                         resolve(reply);
+                    } else {
+                        reject(error);
                     }
                 });
         });
     }
 
-    protected _notifyEvent(event: string, ...args: any[]): boolean {
-        return this.emit(event, ...args);
+    protected _notifyEvent(event: string, ...args: any[]) {
+        this.emit(event, ...args);
     }
 
     protected _onNotifyReceivedEvent(event: string, socket: SocketIOClient.Socket) {

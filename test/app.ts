@@ -36,7 +36,7 @@ function testWorldAPI(api: API.WorldAPI) {
     }
 
     api.on(API.Events.WorldSyncDataDiff, (name, diff) => {
-        debug(api.currentlySynced('globals'));
+        api.currentlySynced('globals').then(debug);
     });
 }
 
@@ -44,6 +44,9 @@ function test(api: API.PublicAPI) {
     testUsersAPI(api.users);
     testChatAPI(api.chat);
     testWorldAPI(api.world);
+
+    api.world.currentlySynced('globals').then(debug);
+
 }
 
 PxtCloudClient.makeAPIConnection().then(test, debug);

@@ -16,33 +16,40 @@ function testUsersAPI(api: API.UsersAPI) {
     if (!api.isConnected) {
         return;
     }
-
-    api.addSelf({ name: 'Jilly Bean' }).then(value => debug(`user existed: %d`, value), debug);
-    api.selfInfo().then(value => debug(`user: %o`, value), debug);
 }
 
 function testChatAPI(api: API.ChatAPI) {
     if (!api.isConnected) {
         return;
     }
-
-    api.newMessage('Hello world!').then(debug(`message queued`), debug);
-    api.on(API.Events.ChatNewMessage, msg => debug(`${msg.name} says '${msg.text}'`));
 }
 
 function testWorldAPI(api: API.WorldAPI) {
     if (!api.isConnected) {
         return;
     }
+
+    const data = {
+        array: [] as number[],
+        count: 0,
+    };
+
+    api.addDataSource('globals', { data });
+
+    setInterval(() => {
+        data.array.push(data.count);
+        data.count++;
+
+        api.syncDataSource('globals');
+
+        debug(data);
+    }, 1000);
 }
 
 function test(api: API.PublicAPI) {
     testUsersAPI(api.users);
     testChatAPI(api.chat);
     testWorldAPI(api.world);
-
-    api.world.currentlySynced('globals').then(debug);
-
 }
 
 PxtCloudClient.makeAPIConnection().then(test, debug);

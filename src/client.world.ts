@@ -30,7 +30,7 @@ export class WorldClient extends Client implements API.WorldAPI {
     }
 
     public currentlySynced(name: string): Promise<object | undefined> {
-        return Promise.resolve(this._datarepo.currentlySynced(name));
+        return Promise.resolve(this._datarepo.getData(name));
     }
 
     public syncDataSource(name: string): PromiseLike<void> {
@@ -55,8 +55,8 @@ export class WorldClient extends Client implements API.WorldAPI {
             case API.Events.WorldSyncData: {
                 const { name, data } = args[0];
 
-                if (!this._datarepo.isDataSource(name)) {
-                    break;
+                if (this._datarepo.isDataSource(name)) {
+                    this._datarepo.setData(name, API.DataRepo.decode(data));
                 }
                 break;
             }
@@ -64,7 +64,9 @@ export class WorldClient extends Client implements API.WorldAPI {
             case API.Events.WorldSyncDataDiff: {
                 const { name, diff } = args[0];
 
-                this._datarepo.applyDataDiff(name, diff);
+                if (this._datarepo.isDataSource(name)) {
+                    this._datarepo.applyDataDiff(name, diff);
+                }
                 break;
             }
         }

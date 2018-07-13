@@ -39,7 +39,7 @@ export abstract class Client extends EventEmitter implements API.CommonAPI {
 
         return new Promise((resolve, reject) => {
             if (!ClientConfig.enabled) {
-                resolve(this);
+                resolve();
                 return;
             }
 

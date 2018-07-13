@@ -7,6 +7,7 @@
 import * as API from 'pxt-cloud-api';
 
 import { ChatClient } from './client.chat';
+import { ClientConfig } from './client.config';
 import { UsersClient } from './client.users';
 import { WorldClient } from './client.world';
 import { Clients } from './client_';
@@ -20,13 +21,18 @@ export * from './client.world';
 const debug = require('debug')('pxt-cloud:clients');
 
 export function makeAPIConnection(uri?: string): PromiseLike<API.PublicAPI> {
-    const clients: Clients = {
-        chat: new ChatClient(),
-        users: new UsersClient(),
-        world: new WorldClient(),
-    };
-
     return new Promise((resolve, reject) => {
+        if (!ClientConfig.enabled) {
+            resolve();
+            return;
+        }
+
+        const clients: Clients = {
+            chat: new ChatClient(),
+            users: new UsersClient(),
+            world: new WorldClient(),
+        };
+
         Promise.all([
             (clients.chat as ChatClient).connect(uri),
             (clients.users as UsersClient).connect(uri),

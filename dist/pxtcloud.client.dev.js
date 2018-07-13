@@ -245,7 +245,7 @@ var Client = (function (_super) {
         this.dispose();
         return new Promise(function (resolve, reject) {
             if (!client_config_1.ClientConfig.enabled) {
-                resolve(_this);
+                resolve();
                 return;
             }
             var options = {
@@ -345,6 +345,7 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var client_chat_1 = require("./client.chat");
+var client_config_1 = require("./client.config");
 var client_users_1 = require("./client.users");
 var client_world_1 = require("./client.world");
 __export(require("./client_"));
@@ -354,12 +355,16 @@ __export(require("./client.users"));
 __export(require("./client.world"));
 var debug = require('debug')('pxt-cloud:clients');
 function makeAPIConnection(uri) {
-    var clients = {
-        chat: new client_chat_1.ChatClient(),
-        users: new client_users_1.UsersClient(),
-        world: new client_world_1.WorldClient(),
-    };
     return new Promise(function (resolve, reject) {
+        if (!client_config_1.ClientConfig.enabled) {
+            resolve();
+            return;
+        }
+        var clients = {
+            chat: new client_chat_1.ChatClient(),
+            users: new client_users_1.UsersClient(),
+            world: new client_world_1.WorldClient(),
+        };
         Promise.all([
             clients.chat.connect(uri),
             clients.users.connect(uri),

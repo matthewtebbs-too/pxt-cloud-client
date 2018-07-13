@@ -12,6 +12,7 @@ import { WorldClient } from './client.world';
 import { Clients } from './client_';
 
 export * from './client_';
+export * from './client.config';
 export * from './client.chat';
 export * from './client.users';
 export * from './client.world';

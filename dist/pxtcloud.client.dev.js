@@ -348,6 +348,7 @@ var client_chat_1 = require("./client.chat");
 var client_users_1 = require("./client.users");
 var client_world_1 = require("./client.world");
 __export(require("./client_"));
+__export(require("./client.config"));
 __export(require("./client.chat"));
 __export(require("./client.users"));
 __export(require("./client.world"));
@@ -382,7 +383,7 @@ function disposeAPIConnection(api) {
 }
 exports.disposeAPIConnection = disposeAPIConnection;
 
-},{"./client.chat":1,"./client.users":3,"./client.world":4,"./client_":5,"debug":20}],7:[function(require,module,exports){
+},{"./client.chat":1,"./client.config":2,"./client.users":3,"./client.world":4,"./client_":5,"debug":20}],7:[function(require,module,exports){
 "use strict";
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];

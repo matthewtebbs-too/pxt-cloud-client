@@ -46,20 +46,34 @@ export class WorldClient extends Client implements API.WorldAPI {
     protected _onConnect(socket: SocketIOClient.Socket) {
         super._onConnect(socket);
 
+        this._onNotifyReceivedEvent(API.Events.WorldSyncData, socket);
         this._onNotifyReceivedEvent(API.Events.WorldSyncDataDiff, socket);
     }
 
     protected _notifyEvent(event: string, ...args: any[]) {
-        if (API.Events.WorldSyncDataDiff === event) {
-            const { name, diff } = args[0];
+        switch (event) {
+            case API.Events.WorldSyncData: {
+                const { name, data } = args[0];
 
-            this._datarepo.applyDataDiff(name, diff);
+                if (!this._datarepo.isDataSource(name)) {
+                    break;
+                }
+                break;
+            }
+
+            case API.Events.WorldSyncDataDiff: {
+                const { name, diff } = args[0];
+
+                this._datarepo.applyDataDiff(name, diff);
+                break;
+            }
         }
 
         super._notifyEvent(event, ...args);
     }
 
     protected _onDisconnect(socket: SocketIOClient.Socket) {
+        this._offNotifyReceivedEvent(API.Events.WorldSyncData, socket);
         this._offNotifyReceivedEvent(API.Events.WorldSyncDataDiff, socket);
     }
 }

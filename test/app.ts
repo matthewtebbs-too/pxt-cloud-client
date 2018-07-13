@@ -34,10 +34,6 @@ function testWorldAPI(api: API.WorldAPI) {
     if (!api.isConnected) {
         return;
     }
-
-    api.on(API.Events.WorldSyncDataDiff, (name, diff) => {
-        api.currentlySynced('globals').then(debug);
-    });
 }
 
 function test(api: API.PublicAPI) {

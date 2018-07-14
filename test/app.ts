@@ -34,15 +34,15 @@ function testWorldAPI(api: API.WorldAPI) {
         count: 0,
     };
 
-    api.addDataSource('globals', { data });
+    api.setDataSource('globals', { data });
 
-    setInterval(() => {
+    setInterval(async () => {
+        debug(data);
+
         data.array.push(data.count);
         data.count++;
 
-        api.syncDataSource('globals');
-
-        debug(data);
+        await api.syncDataSource('globals');
     }, 1000);
 }
 

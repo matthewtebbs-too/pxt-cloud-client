@@ -42,7 +42,7 @@ function testWorldAPI(api: API.WorldAPI) {
         data.array.push(data.count);
         data.count++;
 
-        await api.syncDataSource('globals');
+        await api.pushData('globals');
     }, 1000);
 }
 

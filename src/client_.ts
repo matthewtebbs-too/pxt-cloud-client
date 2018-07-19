@@ -4,7 +4,6 @@
     Copyright (c) 2018 MuddyTummy Software LLC
 */
 
-import * as Promise from 'bluebird';
 import { EventEmitter } from 'events';
 import * as SocketIO from 'socket.io-client';
 const url = require('socket.io-client/lib/url');

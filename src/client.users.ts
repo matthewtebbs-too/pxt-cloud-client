@@ -4,8 +4,6 @@
     Copyright (c) 2018 MuddyTummy Software LLC
 */
 
-import * as Promise from 'bluebird';
-
 import * as API from 'pxt-cloud-api';
 
 import { Client } from './client_';

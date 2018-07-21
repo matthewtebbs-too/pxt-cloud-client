@@ -19,6 +19,17 @@ export class WorldClient extends Client implements API.WorldAPI {
         return await super.connect(uri, 'world');
     }
 
+    public async syncDataSources() {
+        const nameddata = await this._promiseEvent<Array<API.Tagged<Buffer>>>(API.Events.WorldPullAllData);
+        nameddata.forEach(({ name, data }) => {
+            if (this._datarepo.isDataSource(name)) {
+                this._datarepo.setData(name, API.DataRepo.decode(data));
+            }
+        });
+
+        return !!nameddata;
+    }
+
     public setDataSource(name: string, source: API.DataSource): boolean {
         return this._datarepo.setDataSource(name, source);
     }
@@ -28,7 +39,7 @@ export class WorldClient extends Client implements API.WorldAPI {
     }
 
     public async pullAllData() {
-        const result: API.NamedData[] = [];
+        const result: Array<API.Tagged<API.Data>> = [];
 
         this._datarepo.names.forEach(async (name: string) => {
             const data = await this.pullData(name);
@@ -40,8 +51,8 @@ export class WorldClient extends Client implements API.WorldAPI {
         return result;
     }
 
-    public pullData(name: string): PromiseLike<object | undefined> {
-        return Promise.resolve(this._datarepo.getData(name));
+    public async pullData(name: string) {
+        return API.DataRepo.encode(this._datarepo.getData(name));
     }
 
     public async pushAllData() {
@@ -50,19 +61,23 @@ export class WorldClient extends Client implements API.WorldAPI {
         );
     }
 
-    public pushData(name: string): PromiseLike<void> {
+    public async pushData(name: string) {
         const diff = this._datarepo.calcDataDiff(name);
-
-        return diff ? this.pushDataDiff(name, diff) : Promise.resolve();
+        if (diff) {
+            await this.pushDataDiff(name, diff);
+        }
     }
 
-    public pushDataDiff(name: string, diff: API.DataDiff[]): PromiseLike<void> {
-        return diff.length > 0 ? this._promiseEvent(API.Events.WorldPushDataDiff, { name, diff }) : Promise.resolve();
+    public async pushDataDiff(name: string, diff: API.DataDiff[]) {
+        if (diff.length > 0) {
+            await this._promiseEvent(API.Events.WorldPushDataDiff, { name, diff });
+        }
     }
 
     protected _onConnect(socket: SocketIOClient.Socket) {
         super._onConnect(socket);
 
+        this._onNotifyReceivedEvent(API.Events.WorldPushAllData, socket);
         this._onNotifyReceivedEvent(API.Events.WorldPushData, socket);
         this._onNotifyReceivedEvent(API.Events.WorldPushDataDiff, socket);
     }
@@ -82,7 +97,7 @@ export class WorldClient extends Client implements API.WorldAPI {
                 const { name, diff } = args[0];
 
                 if (this._datarepo.isDataSource(name)) {
-                    this._datarepo.applyDataDiff(name, diff);
+                    this._datarepo.applyDataDiff(name, API.DataRepo.decode(diff));
                 }
                 break;
             }
@@ -92,6 +107,7 @@ export class WorldClient extends Client implements API.WorldAPI {
     }
 
     protected _onDisconnect(socket: SocketIOClient.Socket) {
+        this._offNotifyReceivedEvent(API.Events.WorldPushAllData, socket);
         this._offNotifyReceivedEvent(API.Events.WorldPushData, socket);
         this._offNotifyReceivedEvent(API.Events.WorldPushDataDiff, socket);
     }

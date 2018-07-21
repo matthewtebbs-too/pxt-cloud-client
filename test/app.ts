@@ -36,14 +36,16 @@ function testWorldAPI(api: API.WorldAPI) {
 
     api.setDataSource('globals', { data });
 
-    setInterval(async () => {
-        debug(data);
+    api.syncDataSources().then(success => {
+        setInterval(async () => {
+            debug(data);
 
-        data.array.push(data.count);
-        data.count++;
+            data.array.push(data.count);
+            data.count++;
 
-        await api.pushData('globals');
-    }, 1000);
+            await api.pushData('globals');
+        }, 1000);
+    });
 }
 
 function test(api: API.PublicAPI) {

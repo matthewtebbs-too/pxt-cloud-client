@@ -36,11 +36,9 @@ async function testWorldAPI(api: API.WorldAPI) {
 
     api.setDataSource('globals', { data });
 
-    debug(await api.syncDataSources());
+    await api.syncDataSources();
 
     setInterval(() => {
-        debug(data);
-
         data.array.push(data.count);
         data.count++;
 

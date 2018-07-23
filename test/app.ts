@@ -12,19 +12,19 @@ import * as PxtCloudClient from '..';
 
 const debug = require('debug')('pxt-cloud:test');
 
-function testUsersAPI(api: API.UsersAPI) {
+async function testUsersAPI(api: API.UsersAPI) {
     if (!api.isConnected) {
         return;
     }
 }
 
-function testChatAPI(api: API.ChatAPI) {
+async function testChatAPI(api: API.ChatAPI) {
     if (!api.isConnected) {
         return;
     }
 }
 
-function testWorldAPI(api: API.WorldAPI) {
+async function testWorldAPI(api: API.WorldAPI) {
     if (!api.isConnected) {
         return;
     }
@@ -36,22 +36,22 @@ function testWorldAPI(api: API.WorldAPI) {
 
     api.setDataSource('globals', { data });
 
-    api.syncDataSources().then(success => {
-        setInterval(async () => {
-            debug(data);
+    debug(await api.syncDataSources());
 
-            data.array.push(data.count);
-            data.count++;
+    setInterval(() => {
+        debug(data);
 
-            await api.pushData('globals');
-        }, 1000);
-    });
+        data.array.push(data.count);
+        data.count++;
+
+        api.pushData('globals').then(debug, debug);
+    }, 1000);
 }
 
-function test(api: API.PublicAPI) {
+async function test(api: API.PublicAPI) {
     testUsersAPI(api.users);
     testChatAPI(api.chat);
     testWorldAPI(api.world);
 }
 
-PxtCloudClient.makeAPIConnection().then(test, debug);
+PxtCloudClient.makeAPIConnection().then(async api => await test(api), debug);

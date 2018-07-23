@@ -20,14 +20,15 @@ export class WorldClient extends Client implements API.WorldAPI {
     }
 
     public async syncDataSources() {
-        const nameddata = await this._promiseEvent<Array<API.Tagged<Buffer>>>(API.Events.WorldPullAllData);
-        nameddata.forEach(({ name, data }) => {
+        const tencdata = await this._promiseEvent<Array<API.Tagged<Buffer>>>(API.Events.WorldPullAllData);
+
+        tencdata.forEach(({ name, data /* encdata */ }) => {
             if (this._datarepo.isDataSource(name)) {
                 this._datarepo.setData(name, API.DataRepo.decode(data));
             }
         });
 
-        return !!nameddata;
+        return !!tencdata;
     }
 
     public setDataSource(name: string, source: API.DataSource): boolean {
@@ -43,6 +44,7 @@ export class WorldClient extends Client implements API.WorldAPI {
 
         this._datarepo.names.forEach(async (name: string) => {
             const data = await this.pullData(name);
+
             if (data) {
                 result.push({ name, data });
             }
@@ -52,7 +54,7 @@ export class WorldClient extends Client implements API.WorldAPI {
     }
 
     public async pullData(name: string) {
-        return API.DataRepo.encode(this._datarepo.getData(name));
+        return this._datarepo.getData(name);
     }
 
     public async pushAllData() {
@@ -63,6 +65,7 @@ export class WorldClient extends Client implements API.WorldAPI {
 
     public async pushData(name: string) {
         const diff = this._datarepo.calcDataDiff(name);
+
         if (diff) {
             await this.pushDataDiff(name, diff);
         }
@@ -70,7 +73,7 @@ export class WorldClient extends Client implements API.WorldAPI {
 
     public async pushDataDiff(name: string, diff: API.DataDiff[]) {
         if (diff.length > 0) {
-            await this._promiseEvent(API.Events.WorldPushDataDiff, { name, diff });
+            await this._promiseEvent(API.Events.WorldPushDataDiff, { name, encdiff: API.DataRepo.encode(diff, true) });
         }
     }
 
@@ -85,19 +88,19 @@ export class WorldClient extends Client implements API.WorldAPI {
     protected _notifyEvent(event: string, ...args: any[]) {
         switch (event) {
             case API.Events.WorldPushData: {
-                const { name, data } = args[0];
+                const { name, encdata } = args[0];
 
                 if (this._datarepo.isDataSource(name)) {
-                    this._datarepo.setData(name, API.DataRepo.decode(data));
+                    this._datarepo.setData(name, API.DataRepo.decode(encdata));
                 }
                 break;
             }
 
             case API.Events.WorldPushDataDiff: {
-                const { name, diff } = args[0];
+                const { name, encdiff } = args[0];
 
                 if (this._datarepo.isDataSource(name)) {
-                    this._datarepo.applyDataDiff(name, API.DataRepo.decode(diff));
+                    this._datarepo.applyDataDiff(name, API.DataRepo.decode(encdiff));
                 }
                 break;
             }

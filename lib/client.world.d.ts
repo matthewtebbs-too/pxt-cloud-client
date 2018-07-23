@@ -1,4 +1,3 @@
-/// <reference types="node" />
 /// <reference types="socket.io-client" />
 import * as API from 'pxt-cloud-api';
 import { Client } from './client_';
@@ -10,7 +9,7 @@ export declare class WorldClient extends Client implements API.WorldAPI {
     setDataSource(name: string, source: API.DataSource): boolean;
     deleteDataSource(name: string): boolean;
     pullAllData(): Promise<API.Tagged<object>[]>;
-    pullData(name: string): Promise<Buffer>;
+    pullData(name: string): Promise<object | undefined>;
     pushAllData(): Promise<void>;
     pushData(name: string): Promise<void>;
     pushDataDiff(name: string, diff: API.DataDiff[]): Promise<void>;

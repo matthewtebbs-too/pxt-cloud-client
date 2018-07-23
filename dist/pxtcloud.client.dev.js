@@ -274,6 +274,7 @@ var WorldClient = (function (_super) {
                 switch (_a.label) {
                     case 0:
                         diff = this._datarepo.calcDataDiff(name);
+                        debug(diff);
                         if (!diff) return [3, 2];
                         return [4, this.pushDataDiff(name, diff)];
                     case 1:

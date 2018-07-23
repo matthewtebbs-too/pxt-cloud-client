@@ -73,7 +73,7 @@ export class WorldClient extends Client implements API.WorldAPI {
 
     public async pushDataDiff(name: string, diff: API.DataDiff[]) {
         if (diff.length > 0) {
-            await this._promiseEvent(API.Events.WorldPushDataDiff, { name, encdiff: API.DataRepo.encode(diff, true) });
+            await this._promiseEvent(API.Events.WorldPushDataDiff, { name, encdiff: API.DataRepo.encodeArray(diff) });
         }
     }
 

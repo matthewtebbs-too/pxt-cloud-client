@@ -38,11 +38,11 @@ async function testWorldAPI(api: API.WorldAPI) {
 
     await api.syncDataSources();
 
-    setInterval(() => {
+    setInterval(async () => {
         data.array.push(data.count);
         data.count++;
 
-        api.pushData('globals').then(debug, debug);
+        await api.pushData('globals');
     }, 1000);
 }
 

@@ -46,8 +46,7 @@ exports.ChatClient = ChatClient;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var debug = require('debug')('pxt-cloud:client');
-var hostname, port;
-var enabled;
+var hostname = 'localhost', port = 3000, enabled = false;
 function isTrue(value) {
     return !!value && null !== value.trim().match(/^(true|1|)$/);
 }
@@ -59,8 +58,12 @@ else if (typeof process !== 'undefined' && process.env) {
     env = process.env;
 }
 if (!!env) {
-    hostname = env.PXT_CLOUD_HOSTNAME;
-    port = env.PXT_CLOUD_PORT;
+    if (env.PXT_CLOUD_HOSTNAME) {
+        hostname = env.PXT_CLOUD_HOSTNAME;
+    }
+    if (env.PXT_CLOUD_PORT) {
+        port = parseInt(env.PXT_CLOUD_PORT, 10);
+    }
     enabled = isTrue(env.PXT_CLOUD_ENABLED);
 }
 var ClientConfig = (function () {
@@ -73,9 +76,9 @@ var ClientConfig = (function () {
         enumerable: true,
         configurable: true
     });
-    ClientConfig.hostname = hostname || 'localhost';
-    ClientConfig.port = port ? parseInt(port, 10) : 3000;
-    ClientConfig.enabled = enabled || false;
+    ClientConfig.hostname = hostname;
+    ClientConfig.port = port;
+    ClientConfig.enabled = enabled;
     return ClientConfig;
 }());
 exports.ClientConfig = ClientConfig;

@@ -6,10 +6,9 @@
 
 const debug = require('debug')('pxt-cloud:client');
 
-let hostname: string | undefined,
-    port: string | undefined;
-
-let enabled: boolean | undefined;
+let hostname: string    = 'localhost',
+    port: number        = 3000,
+    enabled: boolean    = false;
 
 function isTrue(value: string | undefined): boolean {
     return !!value && null !== value.trim().match(/^(true|1|)$/);
@@ -24,15 +23,21 @@ if (typeof localStorage !== 'undefined') {
 }
 
 if (!!env) {
-    hostname = env.PXT_CLOUD_HOSTNAME;
-    port = env.PXT_CLOUD_PORT;
+    if (env.PXT_CLOUD_HOSTNAME) {
+        hostname = env.PXT_CLOUD_HOSTNAME;
+    }
+
+    if (env.PXT_CLOUD_PORT) {
+        port = parseInt(env.PXT_CLOUD_PORT, 10);
+    }
+
     enabled = isTrue(env.PXT_CLOUD_ENABLED);
 }
 
 export class ClientConfig {
-    public static hostname = hostname || 'localhost';
-    public static port = port ? parseInt(port, 10) : 3000;
-    public static enabled = enabled || false;
+    public static hostname = hostname;
+    public static port = port;
+    public static enabled = enabled;
 
     public static get defaultUri(): string {
         return `https://${ClientConfig.hostname}:${ClientConfig.port}`;

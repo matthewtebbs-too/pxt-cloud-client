@@ -64,7 +64,9 @@ if (!!env) {
     if (env.PXT_CLOUD_PORT) {
         port = parseInt(env.PXT_CLOUD_PORT, 10);
     }
-    enabled = isTrue(env.PXT_CLOUD_ENABLED);
+    if (env.PXT_CLOUD_ENABLED) {
+        enabled = isTrue(env.PXT_CLOUD_ENABLED);
+    }
 }
 var ClientConfig = (function () {
     function ClientConfig() {

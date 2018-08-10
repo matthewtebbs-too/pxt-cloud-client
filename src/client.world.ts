@@ -23,7 +23,7 @@ export class WorldClient extends Client implements API.WorldAPI {
         const tencdata = await this._promiseEvent<Array<API.Tagged<Buffer>>>(API.Events.WorldPullAllData);
 
         tencdata.forEach(({ name, data /* encdata */ }) => {
-            if (this._datarepo.isDataSource(name)) {
+            if (this._datarepo.isDataSource(name) && data) {
                 this._datarepo.setData(name, API.DataRepo.decode(data));
             }
         });
@@ -92,7 +92,9 @@ export class WorldClient extends Client implements API.WorldAPI {
             case API.Events.WorldPushData: {
                 const { name, encdata } = args[0];
 
+                debug('received all data');
                 if (this._datarepo.isDataSource(name)) {
+                    debug('processed all data');
                     this._datarepo.setData(name, API.DataRepo.decode(encdata));
                 }
                 break;

@@ -221,7 +221,7 @@ var WorldClient = (function (_super) {
                         tencdata = _a.sent();
                         tencdata.forEach(function (_a) {
                             var name = _a.name, data = _a.data;
-                            if (_this._datarepo.isDataSource(name)) {
+                            if (_this._datarepo.isDataSource(name) && data) {
                                 _this._datarepo.setData(name, API.DataRepo.decode(data));
                             }
                         });
@@ -328,7 +328,9 @@ var WorldClient = (function (_super) {
         switch (event) {
             case API.Events.WorldPushData: {
                 var _a = args[0], name_1 = _a.name, encdata = _a.encdata;
+                debug('received all data');
                 if (this._datarepo.isDataSource(name_1)) {
+                    debug('processed all data');
                     this._datarepo.setData(name_1, API.DataRepo.decode(encdata));
                 }
                 break;

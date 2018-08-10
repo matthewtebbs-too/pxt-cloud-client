@@ -10,9 +10,9 @@ import * as API from 'pxt-cloud-api';
 
 import * as PxtCloudClient from '..';
 
-const debug = require('debug')('pxt-cloud:test');
-
 const isProducer = process.env.PRODUCE;
+
+const debug = require('debug')(`pxt-cloud:${isProducer ? 'produce' : 'consume'}`);
 
 async function testUsersAPI(api: API.UsersAPI) {
     if (!api.isConnected) {
@@ -31,7 +31,7 @@ async function testWorldAPI(api: API.WorldAPI) {
         return;
     }
 
-    debug(isProducer ? 'Producing...' : 'Consuming...')
+    debug(isProducer ? 'Producing...' : 'Consuming...');
 
     const data = {
         array: [] as number[],
@@ -47,11 +47,18 @@ async function testWorldAPI(api: API.WorldAPI) {
             data.array.push(data.count);
             data.count++;
         } else {
-            data.array.shift();
+            for (let index = 0; index < data.array.length; index++) {
+                if (data.array[index] !== -1) {
+                    data.array[index] = -1;
+                    break;
+                }
+            }
         }
 
         await api.pushData('globals');
-    }, isProducer ? 750 : 1000);
+
+        debug(data);
+    }, isProducer ? 1500 : 2000);
 }
 
 async function test(api: API.PublicAPI) {
@@ -59,7 +66,7 @@ async function test(api: API.PublicAPI) {
         return;
     }
 
-    api.users.addSelf({ name: isProducer ? 'Producer' : 'Comsumer' });
+    api.users.addSelf({ name: isProducer ? 'Producer' : 'Consumer' });
 
     api.users.on(API.Events.UserJoined, () => api.chat.newMessage('hi!'));
 
@@ -67,7 +74,7 @@ async function test(api: API.PublicAPI) {
 
     debug('Waiting 2 seconds to start... :)');
 
-    setInterval(async () => {
+    setTimeout(async () => {
         testUsersAPI(api.users);
         testChatAPI(api.chat);
         testWorldAPI(api.world);

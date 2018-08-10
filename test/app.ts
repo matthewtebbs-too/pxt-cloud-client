@@ -12,6 +12,10 @@ import * as PxtCloudClient from '..';
 
 const debug = require('debug')('pxt-cloud:test');
 
+const isProducer = process.env.PRODUCE;
+
+debug(isProducer ? 'Producing...' : 'Consuming...')
+
 async function testUsersAPI(api: API.UsersAPI) {
     if (!api.isConnected) {
         return;
@@ -39,11 +43,15 @@ async function testWorldAPI(api: API.WorldAPI) {
     await api.syncDataSources();
 
     setInterval(async () => {
-        data.array.push(data.count);
-        data.count++;
+        if (isProducer) {
+            data.array.push(data.count);
+            data.count++;
+        } else {
+            data.array.shift();
+        }
 
         await api.pushData('globals');
-    }, 1000);
+    }, isProducer ? 750 : 1000);
 }
 
 async function test(api: API.PublicAPI) {

@@ -59,6 +59,6 @@
     "clean": "gulp clean",
     "bundle": "gulp bundle",
     "start": "gulp",
-    "test": "tsc -project test/ && node built.test/app.js"
+    "test": "tsc -project test/ && node --inspect-brk built.test/app.js"
   }
 }

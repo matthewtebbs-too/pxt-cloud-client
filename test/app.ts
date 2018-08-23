@@ -56,8 +56,6 @@ async function testWorldAPI(api: API.WorldAPI) {
         }
 
         await api.pushData('globals');
-
-        debug(data);
     }, isProducer ? 1500 : 2000);
 }
 
@@ -68,7 +66,7 @@ async function test(api: API.PublicAPI) {
 
     api.users.addSelf({ name: isProducer ? 'Producer' : 'Consumer' });
 
-    api.users.on(API.Events.UserJoined, () => api.chat.newMessage('hi!'));
+    api.users.on(API.Events.UserJoined, async () => await api.chat.newMessage('hi!'));
 
     api.chat.on(API.Events.ChatNewMessage, args => debug(`${args.name} says '${args.text}'`));
 

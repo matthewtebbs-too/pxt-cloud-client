@@ -66,8 +66,6 @@ export class WorldClient extends Client implements API.WorldAPI {
     public async pushData(name: string) {
         const diff = this._datarepo.calcDataDiff(name);
 
-        debug(diff);
-
         if (diff) {
             await this.pushDataDiff(name, diff);
         }

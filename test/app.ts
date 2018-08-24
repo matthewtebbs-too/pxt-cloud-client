@@ -56,6 +56,8 @@ async function testWorldAPI(api: API.WorldAPI) {
         }
 
         await api.pushData('globals');
+
+        debug(data);
     }, isProducer ? 1500 : 2000);
 }
 

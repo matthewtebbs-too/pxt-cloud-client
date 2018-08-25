@@ -77,6 +77,14 @@ export class WorldClient extends Client implements API.WorldAPI {
         }
     }
 
+    public async lockData(name: string) {
+        return await this._promiseEvent<boolean>(API.Events.WorldLockData, name);
+    }
+
+    public async unlockData(name: string) {
+        return await this._promiseEvent<boolean>(API.Events.WorldUnlockData, name);
+    }
+
     protected _onConnect(socket: SocketIOClient.Socket) {
         super._onConnect(socket);
 
@@ -90,9 +98,7 @@ export class WorldClient extends Client implements API.WorldAPI {
             case API.Events.WorldPushData: {
                 const { name, encdata } = args[0];
 
-                debug('received all data');
                 if (this._datarepo.isDataSource(name)) {
-                    debug('processed all data');
                     this._datarepo.setData(name, API.DataRepo.decode(encdata));
                 }
                 break;

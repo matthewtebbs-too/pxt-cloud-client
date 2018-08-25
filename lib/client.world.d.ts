@@ -13,6 +13,8 @@ export declare class WorldClient extends Client implements API.WorldAPI {
     pushAllData(): Promise<void>;
     pushData(name: string): Promise<void>;
     pushDataDiff(name: string, diff: API.DataDiff[]): Promise<void>;
+    lockData(name: string): Promise<boolean>;
+    unlockData(name: string): Promise<boolean>;
     protected _onConnect(socket: SocketIOClient.Socket): void;
     protected _notifyEvent(event: string, ...args: any[]): void;
     protected _onDisconnect(socket: SocketIOClient.Socket): void;

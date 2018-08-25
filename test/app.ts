@@ -43,6 +43,8 @@ async function testWorldAPI(api: API.WorldAPI) {
     await api.syncDataSources();
 
     setInterval(async () => {
+        await api.lockData('globals');
+
         if (isProducer) {
             data.array.push(data.count);
             data.count++;
@@ -50,12 +52,14 @@ async function testWorldAPI(api: API.WorldAPI) {
             if (undefined !== data.array.shift()) {
                 data.count--;
             }
-
         }
 
         await api.pushData('globals');
 
         debug(data);
+
+        await api.unlockData('globals');
+
     }, isProducer ? 1969 : 3217);
 }
 

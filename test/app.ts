@@ -47,18 +47,16 @@ async function testWorldAPI(api: API.WorldAPI) {
             data.array.push(data.count);
             data.count++;
         } else {
-            for (let index = 0; index < data.array.length; index++) {
-                if (data.array[index] !== -1) {
-                    data.array[index] = -1;
-                    break;
-                }
+            if (undefined !== data.array.shift()) {
+                data.count--;
             }
+
         }
 
         await api.pushData('globals');
 
         debug(data);
-    }, isProducer ? 500 : 750);
+    }, isProducer ? 1969 : 3217);
 }
 
 async function test(api: API.PublicAPI) {

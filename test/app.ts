@@ -65,7 +65,6 @@ async function testWorldAPI(api: API.WorldAPI) {
         } else {
             debug('failed lock globals!');
         }
-
     }
 }
 

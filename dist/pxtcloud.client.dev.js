@@ -288,12 +288,10 @@ var WorldClient = (function (_super) {
                 switch (_a.label) {
                     case 0:
                         diff = this._datarepo.calcDataDiff(name);
-                        if (!diff) return [3, 2];
                         return [4, this.pushDataDiff(name, diff)];
                     case 1:
                         _a.sent();
-                        _a.label = 2;
-                    case 2: return [2];
+                        return [2];
                 }
             });
         });
@@ -303,7 +301,7 @@ var WorldClient = (function (_super) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!(diff.length > 0)) return [3, 2];
+                        if (!(diff && diff.length > 0)) return [3, 2];
                         return [4, this._promiseEvent(API.Events.WorldPushDataDiff, { name: name, encdiff: API.DataRepo.encodeArray(diff) })];
                     case 1:
                         _a.sent();

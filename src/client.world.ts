@@ -66,13 +66,11 @@ export class WorldClient extends Client implements API.WorldAPI {
     public async pushData(name: string) {
         const diff = this._datarepo.calcDataDiff(name);
 
-        if (diff) {
-            await this.pushDataDiff(name, diff);
-        }
+        await this.pushDataDiff(name, diff);
     }
 
-    public async pushDataDiff(name: string, diff: API.DataDiff[]) {
-        if (diff.length > 0) {
+    public async pushDataDiff(name: string, diff: API.DataDiff[] | undefined) {
+        if (diff && diff.length > 0) {
             await this._promiseEvent(API.Events.WorldPushDataDiff, { name, encdiff: API.DataRepo.encodeArray(diff) });
         }
     }

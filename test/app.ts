@@ -35,32 +35,38 @@ async function testWorldAPI(api: API.WorldAPI) {
 
     const data = {
         array: [] as number[],
-        count: 0,
+        next: 0,
     };
 
     api.setDataSource('globals', { data });
 
     await api.syncDataSources();
 
-    setInterval(async () => {
-        await api.lockData('globals');
+    for (;;) {
+       if (await api.lockData('globals')) {
+            if (isProducer) {
+                debug(data.next);
+                data.array.push(data.next++);
+            } else {
+                let value;
+                for (;;) {
+                    value = data.array.shift();
+                    if (undefined === value) {
+                        break;
+                    }
 
-        if (isProducer) {
-            data.array.push(data.count);
-            data.count++;
-        } else {
-            if (undefined !== data.array.shift()) {
-                data.count--;
+                    debug(value);
+                }
             }
+
+            await api.pushData('globals');
+
+            await api.unlockData('globals');
+        } else {
+            debug('failed lock globals!');
         }
 
-        await api.pushData('globals');
-
-        debug(data);
-
-        await api.unlockData('globals');
-
-    }, isProducer ? 1969 : 3217);
+    }
 }
 
 async function test(api: API.PublicAPI) {

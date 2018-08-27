@@ -108,7 +108,7 @@ export class WorldClient extends Client implements API.WorldAPI {
                 const { name, encdiff } = args[0];
 
                 if (this._datarepo.isDataSource(name)) {
-                    this._datarepo.applyDataDiff(name, API.DataRepo.decode(encdiff));
+                    this._datarepo.applyDataDiff(name, API.DataRepo.decode(encdiff), true /* reset recent */);
                 }
                 break;
             }

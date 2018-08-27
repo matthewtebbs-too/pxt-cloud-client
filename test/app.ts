@@ -42,10 +42,11 @@ async function testWorldAPI(api: API.WorldAPI) {
 
     await api.syncDataSources();
 
+    debug('Start');
+
     for (;;) {
-       if (await api.lockData('globals')) {
+        if (await api.lockData('globals')) {
             if (isProducer) {
-                debug(data.next);
                 data.array.push(data.next++);
             } else {
                 let value;
@@ -55,17 +56,23 @@ async function testWorldAPI(api: API.WorldAPI) {
                         break;
                     }
 
-                    debug(value);
+                    // debug(value);
                 }
             }
 
             await api.pushData('globals');
 
             await api.unlockData('globals');
+
+            if (1000 < data.next) {
+                break;
+            }
         } else {
             debug('failed lock globals!');
         }
     }
+
+    debug('Finished');
 }
 
 async function test(api: API.PublicAPI) {

@@ -58,13 +58,13 @@ export class WorldClient extends Client implements API.WorldAPI {
     }
 
     public async pushAllData(unlock: boolean = false) {
-        this._datarepo.names.forEach(async (name: string) =>
-            await this.pushData(name, false),
+        const tencdata: Array<API.Tagged<Buffer>> = [];
+
+        this._datarepo.names.forEach(name =>
+            tencdata.push({ name, data: API.DataRepo.encode(this._datarepo.getData(name)) }),
         );
 
-        if (unlock) {
-            await this.unlockData('*');
-        }
+        await this._promiseEvent(API.Events.WorldPushAllData, { tencdata, unlock });
     }
 
     public async pushData(name: string, unlock: boolean = false) {

@@ -270,22 +270,19 @@ var WorldClient = (function (_super) {
     WorldClient.prototype.pushAllData = function (unlock) {
         if (unlock === void 0) { unlock = false; }
         return __awaiter(this, void 0, void 0, function () {
+            var tencdata;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        this._datarepo.names.forEach(function (name) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0: return [4, this.pushData(name, false)];
-                                case 1: return [2, _a.sent()];
-                            }
-                        }); }); });
-                        if (!unlock) return [3, 2];
-                        return [4, this.unlockData('*')];
+                        tencdata = [];
+                        this._datarepo.names.forEach(function (name) {
+                            return tencdata.push({ name: name, data: API.DataRepo.encode(_this._datarepo.getData(name)) });
+                        });
+                        return [4, this._promiseEvent(API.Events.WorldPushAllData, { tencdata: tencdata, unlock: unlock })];
                     case 1:
                         _a.sent();
-                        _a.label = 2;
-                    case 2: return [2];
+                        return [2];
                 }
             });
         });

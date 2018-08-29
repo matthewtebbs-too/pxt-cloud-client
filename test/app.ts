@@ -46,25 +46,28 @@ async function testWorldAPI(api: API.WorldAPI) {
 
     for (;;) {
         if (await api.lockData('globals')) {
+            let finished;
+
             if (isProducer) {
                 data.array.push(data.next++);
+
+                finished = 100 < data.next;
             } else {
                 let value;
+
                 for (;;) {
                     value = data.array.shift();
                     if (undefined === value) {
                         break;
                     }
-
-                    // debug(value);
                 }
+
+                finished = 0 === data.array.length && 100 < data.next;
             }
 
-            await api.pushData('globals');
+            await api.pushData('globals', true /* unlock upon push */);
 
-            await api.unlockData('globals');
-
-            if (1000 < data.next) {
+            if (finished) {
                 break;
             }
         } else {

@@ -57,21 +57,27 @@ export class WorldClient extends Client implements API.WorldAPI {
         return this._datarepo.getData(name);
     }
 
-    public async pushAllData() {
+    public async pushAllData(unlock: boolean = false) {
         this._datarepo.names.forEach(async (name: string) =>
-            await this.pushData(name),
+            await this.pushData(name, false),
         );
+
+        if (unlock) {
+            await this.unlockData('*');
+        }
     }
 
-    public async pushData(name: string) {
+    public async pushData(name: string, unlock: boolean = false) {
         const diff = this._datarepo.calcDataDiff(name);
 
-        await this.pushDataDiff(name, diff);
+        await this.pushDataDiff(name, diff, unlock);
     }
 
-    public async pushDataDiff(name: string, diff: API.DataDiff[] | undefined) {
+    public async pushDataDiff(name: string, diff: API.DataDiff[] | undefined, unlock: boolean = false) {
         if (diff && diff.length > 0) {
-            await this._promiseEvent(API.Events.WorldPushDataDiff, { name, encdiff: API.DataRepo.encodeArray(diff) });
+            await this._promiseEvent(API.Events.WorldPushDataDiff, { name, encdiff: API.DataRepo.encodeArray(diff), unlock });
+        } else if (unlock) {
+            await this.unlockData(name);
         }
     }
 

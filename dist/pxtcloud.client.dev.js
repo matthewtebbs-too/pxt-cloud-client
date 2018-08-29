@@ -267,28 +267,38 @@ var WorldClient = (function (_super) {
             });
         });
     };
-    WorldClient.prototype.pushAllData = function () {
+    WorldClient.prototype.pushAllData = function (unlock) {
+        if (unlock === void 0) { unlock = false; }
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
             return __generator(this, function (_a) {
-                this._datarepo.names.forEach(function (name) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, this.pushData(name)];
-                        case 1: return [2, _a.sent()];
-                    }
-                }); }); });
-                return [2];
+                switch (_a.label) {
+                    case 0:
+                        this._datarepo.names.forEach(function (name) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4, this.pushData(name, false)];
+                                case 1: return [2, _a.sent()];
+                            }
+                        }); }); });
+                        if (!unlock) return [3, 2];
+                        return [4, this.unlockData('*')];
+                    case 1:
+                        _a.sent();
+                        _a.label = 2;
+                    case 2: return [2];
+                }
             });
         });
     };
-    WorldClient.prototype.pushData = function (name) {
+    WorldClient.prototype.pushData = function (name, unlock) {
+        if (unlock === void 0) { unlock = false; }
         return __awaiter(this, void 0, void 0, function () {
             var diff;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         diff = this._datarepo.calcDataDiff(name);
-                        return [4, this.pushDataDiff(name, diff)];
+                        return [4, this.pushDataDiff(name, diff, unlock)];
                     case 1:
                         _a.sent();
                         return [2];
@@ -296,17 +306,24 @@ var WorldClient = (function (_super) {
             });
         });
     };
-    WorldClient.prototype.pushDataDiff = function (name, diff) {
+    WorldClient.prototype.pushDataDiff = function (name, diff, unlock) {
+        if (unlock === void 0) { unlock = false; }
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!(diff && diff.length > 0)) return [3, 2];
-                        return [4, this._promiseEvent(API.Events.WorldPushDataDiff, { name: name, encdiff: API.DataRepo.encodeArray(diff) })];
+                        return [4, this._promiseEvent(API.Events.WorldPushDataDiff, { name: name, encdiff: API.DataRepo.encodeArray(diff), unlock: unlock })];
                     case 1:
                         _a.sent();
-                        _a.label = 2;
-                    case 2: return [2];
+                        return [3, 4];
+                    case 2:
+                        if (!unlock) return [3, 4];
+                        return [4, this.unlockData(name)];
+                    case 3:
+                        _a.sent();
+                        _a.label = 4;
+                    case 4: return [2];
                 }
             });
         });
